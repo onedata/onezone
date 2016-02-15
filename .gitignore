@@ -1,0 +1,11 @@
+*.iml
+.idea
+
+*.pyc
+
+test-reports/*
+
+package
+onezone_meta/package
+onezone_meta/onezone.spec
+onezone_meta/onezone/DEBIAN/control
