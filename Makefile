@@ -63,7 +63,7 @@ build_cluster_manager: submodules
 ##
 
 test_packaging:
-	./bamboos/test_run.py --test-dir tests/packaging -s
+	./test_run.py --test-dir tests/packaging -s
 
 ##
 ## Clean
