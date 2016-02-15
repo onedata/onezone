@@ -62,7 +62,7 @@ build_cluster_manager: submodules
 ## Test
 ##
 
-test_packaging:
+test_packaging: submodules
 	./test_run.py --test-dir tests/packaging -s
 
 ##
