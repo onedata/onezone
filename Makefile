@@ -95,7 +95,7 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	sed -i 's/{{onezone_build}}/$(ONEZONE_BUILD)/g' onezone_meta/onezone.spec
 	sed -i 's/{{cluster_manager_version}}/$(CLUSTER_MANAGER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
-	sed -i 's/{{onepanel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
+	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
 
 	bamboos/docker/make.py -i onedata/rpm_builder --privileged --group mock -c \
 	        mock --buildsrpm --spec onezone_meta/onezone.spec \
@@ -133,7 +133,7 @@ deb: deb_onepanel deb_oz_worker deb_cluster_manager
 	sed -i 's/{{onezone_build}}/$(ONEZONE_BUILD)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{cluster_manager_version}}/$(CLUSTER_MANAGER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
-	sed -i 's/{{onepanel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone/DEBIAN/control
+	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 
 	bamboos/docker/make.py -s onezone_meta -r . -c 'dpkg-deb -b onezone'
 	mv onezone_meta/onezone.deb package/$(DISTRIBUTION)/binary-amd64/onezone_$(ONEZONE_VERSION)-$(ONEZONE_BUILD)_amd64.deb
