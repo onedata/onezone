@@ -1,3 +1,4 @@
+from tests import test_utils
 from tests.test_common import *
 
 package_dir = os.path.join(os.getcwd(), 'package/wily/binary-amd64')
