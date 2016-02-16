@@ -40,7 +40,6 @@ check_call(['dnf', '-y', 'install', '/root/pkg/' + onezone_package],
 check_call(['service', 'oz_panel', 'status'])
 check_call(['ls', '/etc/cluster_manager/app.config'])
 check_call(['ls', '/etc/oz_worker/app.config'])
-check_call(['/usr/bin/oneclient', '--help'])
 
 # disable gr cert verification
 check_call(['sed', '-i', 's/{verify_gr_cert, true}/{verify_gr_cert, false}/g',
