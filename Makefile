@@ -1,6 +1,9 @@
 # distro for package building (oneof: wily, fedora-23-x86_64)
 DISTRIBUTION            ?= none
-export DISTRIBUTION
+DOCKER_RELEASE          ?= development
+DOCKER_REG_USER         ?= ""
+DOCKER_REG_PASSWORD     ?= ""
+DOCKER_REG_EMAIL        ?= ""
 
 ONEZONE_VERSION	        ?= $(shell git describe --tags --always | tr - .)
 ONEZONE_BUILD           ?= 1
@@ -159,3 +162,12 @@ debdirs:
 
 package.tar.gz:
 	tar -chzf package.tar.gz package
+
+##
+## Docker artifact
+##
+
+docker:
+	./dockerbuild.py --user $(DOCKER_REG_USER) --password $(DOCKER_REG_PASSWORD) \
+                         --email $(DOCKER_REG_EMAIL) --build-arg RELEASE=$(DOCKER_RELEASE) \
+                         --name onezone --publish --remove packaging
