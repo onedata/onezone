@@ -9,3 +9,5 @@ package
 onezone_meta/package
 onezone_meta/onezone.spec
 onezone_meta/onezone/DEBIAN/control
+dockerbuild-report.txt
+dockerbuild-sha.txt

@@ -170,4 +170,5 @@ package.tar.gz:
 docker:
 	./dockerbuild.py --user $(DOCKER_REG_USER) --password $(DOCKER_REG_PASSWORD) \
                          --email $(DOCKER_REG_EMAIL) --build-arg RELEASE=$(DOCKER_RELEASE) \
-                         --name onezone --publish --remove packaging
+                         --build-arg VERSION=$(ONEZONE_VERSION) --name onezone \
+                         --publish --remove packaging
