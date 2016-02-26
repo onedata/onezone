@@ -37,9 +37,14 @@ unpack = tar xzf $(1).tar.gz
 ## Submodules
 ##
 
+branch = $(shell git rev-parse --abbrev-ref HEAD)
 submodules:
 	./onedata_submodules.sh init
+ifeq ($(branch),develop)
+	./onedata_submodules.sh update --remote
+else
 	./onedata_submodules.sh update
+endif
 
 ##
 ## Build
