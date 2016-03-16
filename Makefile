@@ -53,7 +53,7 @@ endif
 build: build_onepanel build_oz_worker build_cluster_manager
 
 build_onepanel: submodules
-	$(call make, onepanel) -e REL_TYPE=globalregistry
+	$(call make, onepanel) -e REL_TYPE=onezone
 
 build_oz_worker: submodules
 	$(call make, oz_worker)
@@ -75,7 +75,7 @@ test_packaging: submodules
 clean_all: clean_onepanel clean_oz_worker clean_cluster_manager clean_packages
 
 clean_onepanel:
-	$(call clean, onepanel) -e REL_TYPE=globalregistry
+	$(call clean, onepanel) -e REL_TYPE=onezone
 
 clean_oz_worker:
 	$(call clean, oz_worker)
@@ -85,8 +85,8 @@ clean_cluster_manager:
 
 clean_packages:
 	rm -rf onezone_meta/onezone.spec \
-		onezone_meta/onezone/DEBIAN/control \
-		onezone_meta/package package
+	       onezone_meta/onezone/DEBIAN/control \
+	       onezone_meta/package package
 
 ##
 ## RPM packaging
@@ -112,7 +112,7 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	$(call mv_rpm, onezone_meta)
 
 rpm_onepanel: clean_onepanel rpmdirs
-	$(call make_rpm, onepanel, package) -e REL_TYPE=globalregistry
+	$(call make_rpm, onepanel, package) -e REL_TYPE=onezone
 	$(call mv_rpm, onepanel)
 
 rpm_oz_worker: clean_oz_worker rpmdirs
@@ -142,7 +142,7 @@ deb: deb_onepanel deb_oz_worker deb_cluster_manager
 	mv onezone_meta/onezone.deb package/$(DISTRIBUTION)/binary-amd64/onezone_$(ONEZONE_VERSION)-$(ONEZONE_BUILD)_amd64.deb
 
 deb_onepanel: clean_onepanel debdirs
-	$(call make_deb, onepanel, package) -e REL_TYPE=globalregistry
+	$(call make_deb, onepanel, package) -e REL_TYPE=onezone
 	$(call mv_deb, onepanel)
 
 deb_oz_worker: clean_oz_worker debdirs
