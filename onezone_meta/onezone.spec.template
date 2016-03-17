@@ -1,0 +1,18 @@
+Name:		onezone
+Version:    {{onezone_version}}
+Release:	{{onezone_build}}%{?dist}
+Summary:    Meta package for onezone components
+License:    MIT
+URL:        https://onedata.org
+
+Requires: cluster-manager = {{cluster_manager_version}}
+Requires: oz-worker = {{oz_worker_version}}
+Requires: oz-panel = {{oz_panel_version}}
+Requires: couchbase-server-community >= 4.0.0
+
+%description
+
+%prep
+%setup -c -T
+%install
+%files

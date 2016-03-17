@@ -1,0 +1,16 @@
+[submodule "oz_worker"]
+	path = oz_worker
+	url = ONEDATA_GIT_URL/globalregistry.git
+	branch = develop
+[submodule "bamboos"]
+	path = bamboos
+	url = ONEDATA_GIT_URL/bamboos.git
+	branch = develop
+[submodule "onepanel"]
+	path = onepanel
+	url = ONEDATA_GIT_URL/onepanel.git
+	branch = develop
+[submodule "cluster_manager"]
+	path = cluster_manager
+	url = ONEDATA_GIT_URL/cluster-manager.git
+	branch = develop
