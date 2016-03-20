@@ -42,7 +42,7 @@ check_call(['ls', '/etc/cluster_manager/app.config'])
 check_call(['ls', '/etc/oz_worker/app.config'])
 
 # disable gr cert verification
-check_call(['sed', '-i', 's/{verify_gr_cert, true}/{verify_gr_cert, false}/g',
+check_call(['sed', '-i', 's/{verify_oz_cert, true}/{verify_oz_cert, false}/g',
             '/etc/oz_panel/app.config'])
 check_call(['service', 'oz_panel', 'restart'])
 
@@ -50,5 +50,16 @@ check_call(['service', 'oz_panel', 'restart'])
 check_call(['wget', '-O', '/etc/ssl/cert.pem',
             'https://raw.githubusercontent.com/bagder/ca-bundle/master/'
             'ca-bundle.crt'])
+
+# onezone configure and install
+check_call(['oz_panel_admin', '--install', '/root/data/install.cfg'])
+
+# validate onezone is running
+check_call(['service', 'cluster_manager', 'status'])
+check_call(['service', 'oz_worker', 'status'])
+
+# uninstall
+# @todo Fix oz_worker stop - VFS-1757
+# check_call(['oz_panel_admin', '--uninstall'])
 
 sys.exit(0)
