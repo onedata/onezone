@@ -11,7 +11,7 @@ CLUSTER_MANAGER_VERSION	?= $(shell git -C cluster_manager describe --tags --alwa
 OZ_WORKER_VERSION       ?= $(shell git -C oz_worker describe --tags --always | tr - .)
 OZ_PANEL_VERSION        ?= $(shell git -C onepanel describe --tags --always | tr - .)
 
-.PHONY: package.tar.gz
+.PHONY: docker package.tar.gz
 
 all: build
 
