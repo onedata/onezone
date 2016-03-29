@@ -62,10 +62,28 @@ build_cluster_manager: submodules
 	$(call make, cluster_manager)
 
 ##
+## Artifacts
+##
+
+artifact: artifact_bamboos artifact_cluster_manager artifact_oz_worker artifact_onepanel
+
+artifact_bamboos:
+	$(call unpack, bamboos)
+
+artifact_cluster_manager:
+	$(call unpack, cluster_manager)
+
+artifact_oz_worker:
+	$(call unpack, oz_worker)
+
+artifact_onepanel:
+	$(call unpack, onepanel)
+
+##
 ## Test
 ##
 
-test_packaging: submodules
+test_packaging:
 	./test_run.py --test-dir tests/packaging -s
 
 ##
@@ -171,4 +189,4 @@ docker:
 	./dockerbuild.py --user $(DOCKER_REG_USER) --password $(DOCKER_REG_PASSWORD) \
                          --email $(DOCKER_REG_EMAIL) --build-arg RELEASE=$(DOCKER_RELEASE) \
                          --build-arg VERSION=$(ONEZONE_VERSION) --name onezone \
-                         --publish --remove packaging
+                         --publish --remove docker

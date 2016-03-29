@@ -68,7 +68,6 @@ check_call(['service', 'cluster_manager', 'status'])
 check_call(['service', 'oz_worker', 'status'])
 
 # uninstall
-# @todo Fix oz_worker stop - VFS-1757
-# check_call(['oz_panel_admin', '--uninstall'])
+check_call(['oz_panel_admin', '--uninstall'])
 
 sys.exit(0)
