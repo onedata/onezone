@@ -52,7 +52,7 @@ check_call(['wget', '-O', '/etc/ssl/cert.pem',
             'ca-bundle.crt'])
 
 # onezone configure and install
-check_call(['oz_panel_admin', '--install', '/root/data/install.cfg'])
+check_call(['oz_panel_admin', '--install', '/root/data/install.yml'])
 
 # validate onezone is running
 check_call(['service', 'cluster_manager', 'status'])
