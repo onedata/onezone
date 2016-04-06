@@ -1,6 +1,6 @@
 [submodule "oz_worker"]
 	path = oz_worker
-	url = ONEDATA_GIT_URL/globalregistry.git
+	url = ONEDATA_GIT_URL/oz-worker.git
 	branch = develop
 [submodule "bamboos"]
 	path = bamboos
