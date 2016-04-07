@@ -4,6 +4,13 @@
 CHANGELOG
 ---------
 
+### 3.0.0-beta1
+
+* update oz_worker with subscriptions
+* VFS-1757 Rename packaging directory to docker.
+* VFS-1757 Fix onezone deinstallation.
+
+
 ### 3.0.0-alpha3
 
 * First version of onezone on the basis of globalregistry.
