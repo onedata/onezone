@@ -3,9 +3,10 @@
 set -e
 
 ROOT="/data"
-DIRS=("/etc/oz_panel" "/etc/oz_worker" "/etc/cluster_manager" "/var/lib/oz_panel" \
-    "/usr/lib64/oz_panel" "/opt/couchbase/var/lib/couchbase" "/var/log/oz_panel" \
-    "/var/log/oz_worker" "/var/log/cluster_manager")
+DIRS=("/etc/oz_panel" "/etc/oz_worker" "/etc/cluster_manager" \
+    "/var/lib/oz_panel" "/var/lib/oz_worker" "/var/lib/cluster_manager" \
+    "/usr/lib64/oz_panel" "/opt/couchbase/var/lib/couchbase" \
+    "/var/log/oz_panel" "/var/log/oz_worker" "/var/log/cluster_manager")
 
 function is_configured {
     if [ -n "`oz_panel_admin --config | grep undefined`" ]; then
@@ -34,9 +35,14 @@ function remove_dirs {
 }
 
 function start_services {
-    service couchbase-server start 2> /dev/null
+    echo -n "Starting couchbase-server: "
+    service couchbase-server start 2>/dev/null 1>/dev/null && \
+    echo "[  OK  ]" || (echo "[FAILED]" && exit 1)
+    sleep 5
     service cluster_manager start 2> /dev/null
+    sleep 5
     service oz_worker start 2> /dev/null
+    echo -e "\nAll services started."
 }
 
 add_dirs
