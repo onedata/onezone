@@ -1,9 +1,9 @@
 # distro for package building (oneof: wily, fedora-23-x86_64)
 DISTRIBUTION            ?= none
 DOCKER_RELEASE          ?= development
+DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-DOCKER_REG_EMAIL        ?= ""
 
 ONEZONE_VERSION	        ?= $(shell git describe --tags --always | tr - .)
 ONEZONE_BUILD           ?= 1
@@ -186,7 +186,7 @@ package.tar.gz:
 ##
 
 docker:
-	./dockerbuild.py --user $(DOCKER_REG_USER) --password $(DOCKER_REG_PASSWORD) \
-                         --email $(DOCKER_REG_EMAIL) --build-arg RELEASE=$(DOCKER_RELEASE) \
-                         --build-arg VERSION=$(ONEZONE_VERSION) --name onezone \
-                         --publish --remove docker
+	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
+                          --password $(DOCKER_REG_PASSWORD) --build-arg RELEASE=$(DOCKER_RELEASE) \
+                          --build-arg VERSION=$(ONEZONE_VERSION) --name onezone \
+                          --publish --remove docker

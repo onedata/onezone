@@ -4,6 +4,13 @@
 CHANGELOG
 ---------
 
+### 3.0.0-beta3
+
+* Update GUI.
+* Update subscriptions.
+* Change levels for several datastore models.
+
+
 ### 3.0.0-beta1
 
 * update oz_worker with subscriptions
