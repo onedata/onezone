@@ -13,11 +13,11 @@ RUN dnf -y upgrade && \
 # Install onezone package
 RUN case ${RELEASE} in \
 		production) \
-			curl -o install.sh http://packages.onedata.org/install_onezone.sh; \
+			curl -o install.sh http://get.onedata.org/onezone.sh; \
                         sh install.sh ${VERSION}; \
 			;; \
 		*) \
-			curl -o install.sh http://onedata-dev-packages.cloud.plgrid.pl/install_onezone.sh; \
+			curl -o install.sh http://onedata-dev-packages.cloud.plgrid.pl/onezone.sh; \
                         sh install.sh ${VERSION}; \
 			sed -i 's/{verify_oz_cert, true}/{verify_oz_cert, false}/g' /etc/oz_panel/app.config \
 			;; \
