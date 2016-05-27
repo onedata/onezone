@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 3.0.0-beta5
+
+* Support for nested groups.
+
+
 ### 3.0.0-beta3
 
 * Update GUI.
