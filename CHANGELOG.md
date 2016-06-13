@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 3.0.0-beta6
+
+* Add basic authorization (login and password)
+
+
 ### 3.0.0-beta5
 
 * Support for nested groups.
