@@ -4,6 +4,24 @@
 CHANGELOG
 ---------
 
+### 3.0.0-beta7
+
+* Update oz GUI
+
+
+### 3.0.0-beta6
+
+* Update refs to orgin/develop.
+* Update oz-worker ref
+* Releasing new version 3.0.0-beta6
+* Deps update
+* VFS-2163 Update references
+* fix unrecognized py.test option
+* Update refs to origin/develop.
+* update bamboos
+* VFS-2062 Update docker entrypoint
+
+
 ### 3.0.0-beta6
 
 * Add basic authorization (login and password)
