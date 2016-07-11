@@ -4,6 +4,61 @@
 CHANGELOG
 ---------
 
+### 3.0.0-beta8
+
+* minor changes and improvements
+
+
+### 3.0.0-beta7
+
+* Update oz_worker reference
+* Deps update
+* Update onepanel reference
+* Releasing new version 3.0.0-beta7
+* Deps update
+
+
+### 3.0.0-beta6
+
+* Update refs to orgin/develop.
+* Update oz-worker ref
+* Releasing new version 3.0.0-beta6
+* Deps update
+* VFS-2163 Update references
+* fix unrecognized py.test option
+* Update refs to origin/develop.
+* update bamboos
+* VFS-2062 Update docker entrypoint
+
+
+### 3.0.0-beta7
+
+* Update oz GUI
+
+
+### 3.0.0-beta6
+
+* Update refs to orgin/develop.
+* Update oz-worker ref
+* Releasing new version 3.0.0-beta6
+* Deps update
+* VFS-2163 Update references
+* fix unrecognized py.test option
+* Update refs to origin/develop.
+* update bamboos
+* VFS-2062 Update docker entrypoint
+
+
+### 3.0.0-beta6
+
+* Add basic authorization (login and password)
+
+
+### 3.0.0-beta5
+
+* Support for nested groups.
+
+
 ### 3.0.0-beta3
 
 * Update GUI.
