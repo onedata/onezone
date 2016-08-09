@@ -5,11 +5,25 @@ DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
 
-ONEZONE_VERSION	        ?= $(shell git describe --tags --always | tr - .)
+ifeq ($(strip $(ONEZONE_VERSION)),)
+ONEZONE_VERSION         := $(shell git describe --tags --always)
+endif
+ifeq ($(strip $(CLUSTER_MANAGER_VERSION)),)
+CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always)
+endif
+ifeq ($(strip $(OZ_WORKER_VERSION)),)
+OZ_WORKER_VERSION       := $(shell git -C oz_worker describe --tags --always)
+endif
+ifeq ($(strip $(OZ_PANEL_VERSION)),)
+OZ_PANEL_VERSION        := $(shell git -C onepanel describe --tags --always)
+endif
+
+ONEZONE_VERSION         := $(shell echo ${ONEZONE_VERSION} | tr - .)
+CLUSTER_MANAGER_VERSION := $(shell echo ${CLUSTER_MANAGER_VERSION} | tr - .)
+OZ_WORKER_VERSION       := $(shell echo ${OZ_WORKER_VERSION} | tr - .)
+OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
+
 ONEZONE_BUILD           ?= 1
-CLUSTER_MANAGER_VERSION	?= $(shell git -C cluster_manager describe --tags --always | tr - .)
-OZ_WORKER_VERSION       ?= $(shell git -C oz_worker describe --tags --always | tr - .)
-OZ_PANEL_VERSION        ?= $(shell git -C onepanel describe --tags --always | tr - .)
 
 .PHONY: docker package.tar.gz
 
@@ -130,15 +144,15 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	$(call mv_rpm, onezone_meta)
 
 rpm_onepanel: clean_onepanel rpmdirs
-	$(call make_rpm, onepanel, package) -e REL_TYPE=onezone
+	$(call make_rpm, onepanel, package) -e PKG_VERSION=$(OZ_PANEL_VERSION) -e REL_TYPE=onezone
 	$(call mv_rpm, onepanel)
 
 rpm_oz_worker: clean_oz_worker rpmdirs
-	$(call make_rpm, oz_worker, package)
+	$(call make_rpm, oz_worker, package) -e PKG_VERSION=$(OZ_WORKER_VERSION)
 	$(call mv_rpm, oz_worker)
 
 rpm_cluster_manager: clean_cluster_manager rpmdirs
-	$(call make_rpm, cluster_manager, package)
+	$(call make_rpm, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION)
 	$(call mv_rpm, cluster_manager)
 
 rpmdirs:
@@ -160,15 +174,15 @@ deb: deb_onepanel deb_oz_worker deb_cluster_manager
 	mv onezone_meta/onezone.deb package/$(DISTRIBUTION)/binary-amd64/onezone_$(ONEZONE_VERSION)-$(ONEZONE_BUILD)_amd64.deb
 
 deb_onepanel: clean_onepanel debdirs
-	$(call make_deb, onepanel, package) -e REL_TYPE=onezone
+	$(call make_deb, onepanel, package) -e PKG_VERSION=$(OZ_PANEL_VERSION) -e REL_TYPE=onezone
 	$(call mv_deb, onepanel)
 
 deb_oz_worker: clean_oz_worker debdirs
-	$(call make_deb, oz_worker, package)
+	$(call make_deb, oz_worker, package) -e PKG_VERSION=$(OZ_WORKER_VERSION)
 	$(call mv_deb, oz_worker)
 
 deb_cluster_manager: clean_cluster_manager debdirs
-	$(call make_deb, cluster_manager, package)
+	$(call make_deb, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION)
 	$(call mv_deb, cluster_manager)
 
 debdirs:
