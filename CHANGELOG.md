@@ -4,6 +4,14 @@
 CHANGELOG
 ---------
 
+### 3.0.0-RC2
+
+* Enable Symmetric Multiprocessing
+* Add admin endpoints to add/remove users and groups from spaces, fix a couple of bugs
+* Turn off HSTS by default, allow configuration via app.config, improve docs integration
+* Use environment variables for packages build
+
+
 ### 3.0.0-RC1
 
 * VFS-2316 Update etls.
