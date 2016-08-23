@@ -11,7 +11,9 @@ import sys
 class TestRpmInstallation:
     # Test if installation has finished successfully
     def test_installation(self):
-        command = 'dnf install -y python && ' \
+        command = 'dnf -y update && ' \
+                  'dnf install -y ca-certificates python python-setuptools && ' \
+                  'easy_install requests && ' \
                   'python /root/data/rpm_install_script.py'
 
         container = docker.run(tty=True,

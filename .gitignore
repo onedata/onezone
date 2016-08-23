@@ -4,6 +4,7 @@
 *.pyc
 
 test-reports/*
+tests/packaging/.cache
 
 package
 onezone_meta/package

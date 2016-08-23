@@ -1,22 +1,28 @@
 # Sample installation config file
-
 cluster:
-  domain_name: "localhost.local"
+  domainName: "localhost.local"
+  autoDeploy: true
   nodes:
-    node:
+    n1:
       hostname: "devel"
-
-  manager:
-    default_node: "node"
+  managers:
+    mainNode: "n1"
     nodes:
-      - "node"
-  worker:
+      - "n1"
+  workers:
     nodes:
-      - "node"
-  database:
+      - "n1"
+  databases:
     nodes:
-      - "node"
-
-  settings:
-    open_files_limit: 65535
-    processes_limit: 65535
+      - "n1"
+onezone:
+  name: "Example"
+  domainName: "onezone.1.dev"
+onepanel:
+  users:
+    "admin1":
+      password: "Password1"
+      userRole: "admin"
+    "user1":
+      password: "Password2"
+      userRole: "regular"
