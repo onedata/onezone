@@ -4,8 +4,9 @@ import json
 import requests
 import sys
 import time
-from subprocess import STDOUT, check_call, check_output
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from subprocess import STDOUT, check_call, check_output
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 # get packages
