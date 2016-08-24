@@ -13,7 +13,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-ROOT = '/volumes/persistency'
+ROOT = '/volumes/persistence'
 DIRS = ['/etc/oz_panel', '/etc/oz_worker', '/etc/cluster_manager',
     '/etc/rc.d/init.d', '/var/lib/oz_panel', '/var/lib/oz_worker',
     '/var/lib/cluster_manager', '/usr/lib64/cluster_manager',
