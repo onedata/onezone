@@ -4,6 +4,13 @@
 CHANGELOG
 ---------
 
+### 3.0.0-RC3
+
+* VFS-2156 Update release docker
+* VFS-2156 Update packages tests
+* Use environment variables for packages build
+
+
 ### 3.0.0-RC2
 
 * Enable Symmetric Multiprocessing
