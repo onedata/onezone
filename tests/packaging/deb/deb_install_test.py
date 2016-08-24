@@ -12,7 +12,8 @@ class TestDebInstallation:
     # Test if installation has finished successfully
     def test_installation(self):
         command = 'apt-get update && ' \
-                  'apt-get install -y python && ' \
+                  'apt-get install -y ca-certificates python python-setuptools && ' \
+                  'easy_install requests && ' \
                   'python /root/data/deb_install_script.py'
 
         container = docker.run(tty=True,
