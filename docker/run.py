@@ -197,20 +197,25 @@ if __name__ == '__main__':
         set_advertise_address('/etc/oz_panel/app.config', advertise_address)
 
     start_service('oz_panel')
-    configured = is_configured()
 
-    if configured:
+    keep_alive = os.environ.get('ONEPANEL_DEBUG_MODE',
+                                'false').lower() == 'true'
+
+    if is_configured():
         start_services()
+        keep_alive = True
     else:
-        batch_mode = os.environ.get('ONEPANEL_BATCH_MODE')
-        batch_cofig = os.environ.get('ONEZONE_CONFIG', '')
-        if batch_mode and batch_mode.lower() == 'true':
-            configured = configure(batch_cofig)
+        batch_mode = os.environ.get('ONEPANEL_BATCH_MODE', 'false')
+        batch_config = os.environ.get('ONEZONE_CONFIG', '')
+        if batch_mode.lower() == 'true':
+            keep_alive = configure(batch_config) or keep_alive
+        else:
+            keep_alive = True
 
     show_details()
 
-    if configured:
+    if is_configured():
         log('\nCongratulations! onezone has been successfully started.')
 
-    if configured or os.environ.get('ONEPANEL_DEBUG_MODE'):
+    if keep_alive:
         infinite_loop()
