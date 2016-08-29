@@ -20,14 +20,19 @@ oz_worker_package = \
     [path for path in packages if path.startswith('oz-worker')][0]
 onezone_package = [path for path in packages if path.startswith('onezone')][0]
 
+# add onedata repository
+check_call(['curl', '-o', 'onedata.gpg.key',
+            'http://packages.onedata.org/onedata.gpg.key'])
+check_call(['apt-key', 'add', 'onedata.gpg.key'])
+with open('/etc/apt/sources.list.d/onedata.list', 'w') as f:
+    f.write('deb http://packages.onedata.org/apt/ubuntu/wily wily main\n')
+    f.write('deb-src http://packages.onedata.org/apt/ubuntu/wily wily main\n')
+
 # update repositories
 check_call(['apt-get', '-y', 'update'])
 
 # add locale
 check_call(['locale-gen', 'en_US.UTF-8'])
-
-# install dependencies
-check_call(['apt-get', '-y', 'install', 'curl', 'apt-transport-https', 'wget'])
 
 # get couchbase
 check_call(['wget', 'http://packages.couchbase.com/releases/4.1.0/couchbase'

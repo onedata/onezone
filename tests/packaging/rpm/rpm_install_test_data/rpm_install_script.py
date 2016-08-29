@@ -25,6 +25,10 @@ onezone_package = \
     [path for path in packages if path.startswith('onezone') and
      path.endswith('.rpm')][0]
 
+# add onedata repository
+check_call(['curl', '-o', '/etc/yum.repos.d/onedata.repo',
+            'http://packages.onedata.org/yum/onedata_fedora_23.repo'])
+
 # get couchbase
 check_call(['wget', 'http://packages.couchbase.com/releases/4.1.0/couchbase'
                     '-server-community-4.1.0-centos7.x86_64.rpm'])
@@ -37,8 +41,8 @@ check_call(['dnf', '-y', 'install', '/root/pkg/' + oz_panel_package],
            stderr=STDOUT)
 check_call(['dnf', '-y', 'install', '/root/pkg/' + cluster_manager_package],
            stderr=STDOUT)
-check_call(['dnf', '-y', 'install', '/root/pkg/' + oz_worker_package],
-           stderr=STDOUT)
+check_call(['dnf', '--enablerepo=onedata', '-y', 'install',
+            '/root/pkg/' + oz_worker_package], stderr=STDOUT)
 check_call(['dnf', '-y', 'install', '/root/pkg/' + onezone_package],
            stderr=STDOUT)
 
