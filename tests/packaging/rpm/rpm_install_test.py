@@ -12,7 +12,7 @@ class TestRpmInstallation:
     # Test if installation has finished successfully
     def test_installation(self):
         command = 'dnf -y update && ' \
-                  'dnf install -y ca-certificates python python-setuptools && ' \
+                  'dnf install -y ca-certificates curl python python-setuptools wget && ' \
                   'easy_install requests && ' \
                   'python /root/data/rpm_install_script.py'
 

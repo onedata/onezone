@@ -20,14 +20,19 @@ oz_worker_package = \
     [path for path in packages if path.startswith('oz-worker')][0]
 onezone_package = [path for path in packages if path.startswith('onezone')][0]
 
+# add onedata repository
+check_call(['curl', '-o', 'onedata.gpg.key',
+            'http://packages.onedata.org/onedata.gpg.key'])
+check_call(['apt-key', 'add', 'onedata.gpg.key'])
+with open('/etc/apt/sources.list.d/onedata.list', 'w') as f:
+    f.write('deb http://packages.onedata.org/apt/ubuntu/wily wily main\n')
+    f.write('deb-src http://packages.onedata.org/apt/ubuntu/wily wily main\n')
+
 # update repositories
 check_call(['apt-get', '-y', 'update'])
 
 # add locale
 check_call(['locale-gen', 'en_US.UTF-8'])
-
-# install dependencies
-check_call(['apt-get', '-y', 'install', 'curl', 'apt-transport-https', 'wget'])
 
 # get couchbase
 check_call(['wget', 'http://packages.couchbase.com/releases/4.1.0/couchbase'
@@ -59,6 +64,7 @@ check_call(['ls', '/etc/oz_worker/app.config'])
 with open('/root/data/install.yml', 'r') as f:
     r = requests.post(
         'https://127.0.0.1:9443/api/v3/onepanel/zone/configuration',
+        auth=('admin', 'password'),
         headers={'content-type': 'application/x-yaml'},
         data=f.read(),
         verify=False)
@@ -67,7 +73,7 @@ with open('/root/data/install.yml', 'r') as f:
     status = 'running'
     while status == 'running':
         r = requests.get('https://127.0.0.1:9443' + loc,
-                         auth=('admin1', 'Password1'),
+                         auth=('admin', 'password'),
                          verify=False)
         print(r.text)
         assert r.status_code == 200
@@ -85,7 +91,7 @@ for service in ['workers', 'managers', 'databases']:
     r = requests.patch(
         'https://127.0.0.1:9443/api/v3/onepanel/zone/{0}?started=false'.format(
             service),
-        auth=('admin1', 'Password1'),
+        auth=('admin', 'password'),
         headers={'content-type': 'application/json'},
         verify=False)
     assert r.status_code == 204
