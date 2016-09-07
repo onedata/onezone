@@ -32,9 +32,14 @@ ADD ca-bundle.pem /etc/ssl/cert.pem
 EXPOSE 53 5555 443 8443 80 8876 8877 9443
 
 # Add entrypoint script
-ADD run.py /root/run.py
+ADD onezone.py /root/onezone.py
+
+# Configure onezone service
+ADD onezone.sh /etc/init.d/onezone
+RUN chkconfig --add onezone
+RUN chkconfig --level 2345 onezone on
 
 RUN mkdir -p /volumes/persistence /volumes/storage
-VOLUME ["/volumes/persistence", "/volumes/storage"]
+VOLUME ["/sys/fs/cgroup", "/volumes/persistence", "/volumes/storage"]
 
-CMD /root/run.py
+CMD ["/usr/sbin/init"]
