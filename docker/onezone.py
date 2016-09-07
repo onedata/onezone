@@ -23,8 +23,9 @@ ADMIN = os.environ.get('ONEPANEL_ADMIN_USERNAME', 'admin')
 PASSWORD = os.environ.get('ONEPANEL_ADMIN_PASSWORD', 'password')
 
 def log(message, end='\n'):
-    sys.stdout.write(message + end)
-    sys.stdout.flush()
+    with open('/proc/1/fd/1', 'w') as f:
+        f.write(message + end)
+        f.flush()
 
 def replace(file_path, pattern, value):
     with open(file_path, 'rw+') as f:
@@ -70,18 +71,16 @@ def set_advertise_address(file_path, advertise_address):
     replace(file_path, r'{advertise_address, .*}',
         '{{advertise_address, "{0}"}}'.format(advertise_address))
 
-def start_service(service_name, stdout=None):
-    with open(os.devnull, 'w') as stderr:
-        sp.check_call(['service', service_name, 'start'], stdout=stdout,
-            stderr=stderr)
+def start_service(service_name):
+    try:
+        sp.check_call(['service', service_name, 'start'])
+        log('Starting {0}: [  OK  ]'.format(service_name))
+    except Exception:
+        pass
 
 def start_services():
-    log('Starting couchbase_server: ', '')
-    with open(os.devnull, 'w') as stdout:
-        start_service('couchbase-server', stdout)
-    log('[  OK  ]')
+    start_service('couchbase-server')
     start_service('cluster_manager')
-    time.sleep(5)
     start_service('oz_worker')
 
 def is_configured():
@@ -121,13 +120,13 @@ def configure(config):
             return False
         else:
             resp = json.loads(r.text)
-            status = resp['status']
+            status = resp.get('status', 'error')
             for step in resp.get('steps', []):
                 if steps and step == steps[0]:
                     steps = steps[1:]
                 else:
                     log(format_step(step))
-            steps = resp['steps']
+            steps = resp.get('steps', [])
             time.sleep(1)
 
     if status != 'ok':
@@ -148,8 +147,8 @@ def get_container_id():
 def inspect_container(container_id):
     try:
         result = sp.check_output(['curl', '-s', '--unix-socket',
-            '/var/run/docker.sock', 'http:/containers/{0}/json'.
-            format(container_id)])
+                                  '/var/run/docker.sock', 'http:/containers/{0}/json'.
+                                 format(container_id)])
         return json.loads(result)
     except Exception:
         return {}
@@ -203,24 +202,15 @@ if __name__ == '__main__':
 
     start_service('oz_panel')
 
-    keep_alive = os.environ.get('ONEPANEL_DEBUG_MODE',
-                                'false').lower() == 'true'
-
     if is_configured():
         start_services()
-        keep_alive = True
     else:
         batch_mode = os.environ.get('ONEPANEL_BATCH_MODE', 'false')
         batch_config = os.environ.get('ONEZONE_CONFIG', '')
         if batch_mode.lower() == 'true':
-            keep_alive = configure(batch_config) or keep_alive
-        else:
-            keep_alive = True
+            configure(batch_config)
 
     show_details()
 
     if is_configured():
         log('\nCongratulations! onezone has been successfully started.')
-
-    if keep_alive:
-        infinite_loop()
