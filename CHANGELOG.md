@@ -4,6 +4,12 @@
 CHANGELOG
 ---------
 
+### 3.0.0-rc5
+
+* Update WebGUI
+* Update one panel for extended configuration options
+
+
 ### 3.0.0-rc4
 
 * Add ONEPANEL_DEBUG_MODE env variable to release docker entrypoint
