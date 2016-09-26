@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 3.0.0-rc7
+
+* VFS-2633 Use specific package builders
+
+
 ### 3.0.0-rc6
 
 * VFS-2582 Using GUI fix for blank notifications
