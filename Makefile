@@ -202,5 +202,9 @@ package.tar.gz:
 docker:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
                           --password $(DOCKER_REG_PASSWORD) --build-arg RELEASE=$(DOCKER_RELEASE) \
-                          --build-arg VERSION=$(ONEZONE_VERSION) --name onezone \
+                          --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
+                          --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
+                          --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
+                          --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
+                          --name onezone \
                           --publish --remove docker
