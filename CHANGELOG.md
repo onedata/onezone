@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 3.0.0-rc8
+
+* Releasing new version 3.0.0-rc8
+
+
 ### 3.0.0-rc7
 
 * VFS-2633 Use specific package builders
