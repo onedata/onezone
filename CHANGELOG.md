@@ -4,6 +4,64 @@
 CHANGELOG
 ---------
 
+### 3.0.0-rc10
+
+* Releasing new version 3.0.0-rc10
+
+
+### 3.0.0-rc9
+
+* Releasing new version 3.0.0-rc9
+
+
+### 3.0.0-rc8
+
+* Releasing new version 3.0.0-rc8
+
+
+### 3.0.0-rc7
+
+* VFS-2633 Use specific package builders
+
+
+### 3.0.0-rc6
+
+* VFS-2582 Using GUI fix for blank notifications
+* VFS-2390 Upgrade rebar to version 3
+
+
+### 3.0.0-rc5
+
+* Update WebGUI
+* Update one panel for extended configuration options
+
+
+### 3.0.0-rc4
+
+* Add ONEPANEL_DEBUG_MODE env variable to release docker entrypoint
+
+
+### 3.0.0-RC3
+
+* VFS-2156 Update release docker
+* VFS-2156 Update packages tests
+* Use environment variables for packages build
+
+
+### 3.0.0-RC2
+
+* Enable Symmetric Multiprocessing
+* Add admin endpoints to add/remove users and groups from spaces, fix a couple of bugs
+* Turn off HSTS by default, allow configuration via app.config, improve docs integration
+* Use environment variables for packages build
+
+
+### 3.0.0-RC1
+
+* VFS-2316 Update etls.
+* VFS-2250 Use wrappers for macaroon serialization
+
+
 ### 3.0.0-beta8
 
 * minor changes and improvements

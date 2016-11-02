@@ -1,38 +1,45 @@
-FROM onedata/fedora-systemd:23
+FROM ubuntu:16.04
 MAINTAINER Krzysztof Trzepla <krzysztof.trzepla@gmail.com>
 
 # Build arguments
 ARG RELEASE
-ARG VERSION=""
+ARG OZ_PANEL_VERSION
+ARG CLUSTER_MANAGER_VERSION
+ARG OZ_WORKER_VERSION
+ARG ONEZONE_VERSION
 ARG ONEPANEL_AUTOSTART=false
 
 # Get the image up to date and install utility tools
-RUN dnf -y upgrade && \
-    dnf -y install fping python net-tools traceroute vim && \
-    dnf clean all
+RUN apt-get -y update && \
+    apt-get -y upgrade && \
+    apt-get -y install ca-certificates curl net-tools python python-setuptools \
+                       python-yaml traceroute vim && \
+    easy_install requests && \
+    apt-get clean
+
+# Generate locale
+RUN locale-gen en_US.UTF-8
 
 # Install onezone package
 RUN case ${RELEASE} in \
-		production) \
-			curl -o install.sh http://get.onedata.org/onezone.sh; \
-                        sh install.sh ${VERSION}; \
-			;; \
-		*) \
-			curl -o install.sh http://onedata-dev-packages.cloud.plgrid.pl/onezone.sh; \
-                        sh install.sh ${VERSION}; \
-			sed -i 's/{verify_oz_cert, true}/{verify_oz_cert, false}/g' /etc/oz_panel/app.config \
-			;; \
-	esac
+        production) \
+            curl -O http://get.onedata.org/onezone.sh; \
+            ;; \
+        *) \
+            curl -O http://onedata-dev-packages.cloud.plgrid.pl/onezone.sh; \
+            ;; \
+    esac && \
+    sh onezone.sh oz-panel=${OZ_PANEL_VERSION}-1; \
+    sh onezone.sh cluster-manager=${CLUSTER_MANAGER_VERSION}-1; \
+    sh onezone.sh oz-worker=${OZ_WORKER_VERSION}-1; \
+    sh onezone.sh onezone=${ONEZONE_VERSION}-1
 
-# Add missing CA bundle (required for server cert validation)
-ADD ca-bundle.pem /etc/ssl/cert.pem
-
-EXPOSE 53 5555 443 8443 80 8876 8877 9443
+EXPOSE 53 53/udp 80 443 5555 5556 6665 6666 7443 8443 8876 8877 9443
 
 # Add entrypoint script
-ADD run.py /root/run.py
+ADD onezone.py /root/onezone.py
 
-RUN mkdir -p /volumes/persistency
-VOLUME ["/volumes/persistency"]
+RUN mkdir -p /volumes/persistence
+VOLUME ["/volumes/persistence"]
 
-CMD /root/run.py
+CMD ["sh", "-c", "/root/onezone.py"]
