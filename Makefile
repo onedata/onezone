@@ -98,7 +98,7 @@ artifact_onepanel:
 ##
 
 test_packaging:
-	./test_run.py --test-type packaging --test-dir tests/packaging -s
+	./test_run.py --test-type packaging -vvv --test-dir tests/packaging -s
 
 ##
 ## Clean
