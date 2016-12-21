@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import json
 import requests
 import sys
@@ -20,25 +18,11 @@ oz_worker_package = \
     [path for path in packages if path.startswith('oz-worker')][0]
 onezone_package = [path for path in packages if path.startswith('onezone')][0]
 
-# add onedata repository
-check_call(['curl', '-o', 'onedata.gpg.key',
-            'http://packages.onedata.org/onedata.gpg.key'])
-check_call(['apt-key', 'add', 'onedata.gpg.key'])
-with open('/etc/apt/sources.list.d/onedata.list', 'w') as f:
-    f.write('deb http://packages.onedata.org/apt/ubuntu/wily wily main\n')
-    f.write('deb-src http://packages.onedata.org/apt/ubuntu/wily wily main\n')
-
-# update repositories
-check_call(['apt-get', '-y', 'update'])
-
-# add locale
-check_call(['locale-gen', 'en_US.UTF-8'])
-
 # get couchbase
 check_call(['wget', 'http://packages.couchbase.com/releases/4.1.0/couchbase'
                     '-server-community_4.1.0-ubuntu14.04_amd64.deb'])
 
-# install
+# install packages
 check_call(['sh', '-c',
             'dpkg -i couchbase-server-community_4.1.0-ubuntu14.04_amd64.deb '
             '; apt-get -f -y install'
@@ -53,15 +37,15 @@ check_call(['sh', '-c', 'dpkg -i /root/pkg/{package} ; apt-get -f -y '
                         'install'.format(package=oz_worker_package)
             ], stderr=STDOUT)
 check_call(['dpkg', '-i', '/root/pkg/{package}'.
-           format(package=onezone_package)], stderr=STDOUT)
+            format(package=onezone_package)], stderr=STDOUT)
 
-# package installation validation
+# validate packages installation
 check_call(['service', 'oz_panel', 'status'])
 check_call(['ls', '/etc/cluster_manager/app.config'])
 check_call(['ls', '/etc/oz_worker/app.config'])
 
-# onezone configure and install
-with open('/root/data/install.yml', 'r') as f:
+# configure onezone
+with open('/root/data/config.yml', 'r') as f:
     r = requests.post(
         'https://127.0.0.1:9443/api/v3/onepanel/zone/configuration',
         auth=('admin', 'password'),
@@ -82,7 +66,7 @@ with open('/root/data/install.yml', 'r') as f:
 
 assert status == 'ok'
 
-# validate onezone is running
+# validate oneprovider configuration
 check_call(['service', 'cluster_manager', 'status'])
 check_call(['service', 'oz_worker', 'status'])
 

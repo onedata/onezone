@@ -1,10 +1,8 @@
-# Sample installation config file
 cluster:
-  domainName: "localhost.local"
-  autoDeploy: true
+  domainName: "dev.local"
   nodes:
     n1:
-      hostname: "devel"
+      hostname: "onezone"
   managers:
     mainNode: "n1"
     nodes:
@@ -17,7 +15,7 @@ cluster:
       - "n1"
 onezone:
   name: "Example"
-  domainName: "onezone.1.dev"
+  domainName: "onezone.dev.local"
 onepanel:
   users:
     "admin1":
