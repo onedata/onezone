@@ -9,6 +9,12 @@ ARG OZ_WORKER_VERSION
 ARG ONEZONE_VERSION
 ARG ONEPANEL_AUTOSTART=false
 
+# Add users and groups
+RUN groupadd -g 110 onedata && \
+    useradd -u 107 -g 110 -d /var/lib/oz_panel oz_panel && \
+    useradd -u 108 -g 110 -d /var/lib/cluster_manager cluster_manager && \
+    useradd -u 109 -g 110 -d /var/lib/oz_worker oz_worker
+
 # Get the image up to date and install utility tools
 RUN apt-get -y update && \
     apt-get -y upgrade && \
