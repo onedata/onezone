@@ -4,6 +4,14 @@
 CHANGELOG
 ---------
 
+### 3.0.0-rc12
+
+* Enable graceful stop on SIGTERM
+* Update refs to origin/release/3.0.0-rc12.
+* VFS-2901 Refactor packages tests
+* VFS-2733 Add excluded path to docker entrypoint
+
+
 ### 3.0.0-rc11
 
 * Releasing new version 3.0.0-rc11
