@@ -4,12 +4,13 @@
 import json
 import os
 import re
-import requests
 import shutil
 import subprocess as sp
 import sys
-import yaml
 import time
+
+import requests
+import yaml
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -165,11 +166,11 @@ def configure(config):
         raise ValueError('Error: {error}\nDescription: {description}\n'
                          'Module: {module}\nFunction: {function}\nHosts: {hosts}\n'
                          'For more information please check the logs.'.format(
-            error=resp.get('error', 'unknown'),
-            description=resp.get('description', '-'),
-            module=resp.get('module', '-'),
-            function=resp.get('function', '-'),
-            hosts=', '.join(resp.get('hosts', []))))
+                             error=resp.get('error', 'unknown'),
+                             description=resp.get('description', '-'),
+                             module=resp.get('module', '-'),
+                             function=resp.get('function', '-'),
+                             hosts=', '.join(resp.get('hosts', []))))
 
 
 def get_container_id():
@@ -181,7 +182,7 @@ def inspect_container(container_id):
     try:
         result = sp.check_output(['curl', '-s', '--unix-socket',
                                   '/var/run/docker.sock', 'http:/containers/{0}/json'.
-                                 format(container_id)])
+                                  format(container_id)])
         return json.loads(result)
     except Exception:
         return {}
@@ -237,7 +238,8 @@ if __name__ == '__main__':
 
         advertise_address = os.environ.get('ONEPANEL_ADVERTISE_ADDRESS')
         if advertise_address:
-            set_advertise_address('/etc/oz_panel/app.config', advertise_address)
+            set_advertise_address(
+                '/etc/oz_panel/app.config', advertise_address)
 
         start_onepanel()
 
