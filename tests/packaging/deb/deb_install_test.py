@@ -44,7 +44,7 @@ def setup_command():
 
 
 @pytest.fixture(scope='module',
-                params=['wily', 'xenial'])
+                params=['xenial'])
 def onezone(request, setup_command):
     distribution = Distribution(request)
     command = setup_command.format(dist=distribution.name)
