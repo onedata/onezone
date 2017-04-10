@@ -4,6 +4,16 @@
 CHANGELOG
 ---------
 
+### 3.0.0-rc14
+
+* Releasing new version 3.0.0-rc14
+
+
+### 3.0.0-rc13
+
+* Releasing new version 3.0.0-rc13
+
+
 ### 3.0.0-rc12
 
 * Enable graceful stop on SIGTERM
