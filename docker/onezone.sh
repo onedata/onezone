@@ -8,10 +8,10 @@ function stop_service {
 function stop_onezone {
   echo -e "\nGracefully stopping onezone...\n"
 
+  stop_service oz_panel
   stop_service oz_worker
   stop_service cluster_manager
   stop_service couchbase-server couchbase
-  stop_service oz_panel
 
   echo -e "\nAll services stopped. Exiting..."
 
