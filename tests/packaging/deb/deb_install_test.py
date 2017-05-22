@@ -34,7 +34,7 @@ class Distribution(object):
 @pytest.fixture(scope='module')
 def setup_command():
     return 'apt-get update && ' \
-        'apt-get install -y ca-certificates python wget python-setuptools && ' \
+        'apt-get install -y ca-certificates locales python wget python-setuptools && ' \
         'easy_install requests && ' \
         'wget -qO- {url}/onedata.gpg.key | apt-key add - && ' \
         'echo "deb {url}/apt/ubuntu/{{dist}} {{dist}} main" > /etc/apt/sources.list.d/onedata.list && ' \
