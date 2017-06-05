@@ -4,6 +4,20 @@
 CHANGELOG
 ---------
 
+### 3.0.0-rc15
+
+* Releasing new version 3.0.0-rc15
+* VFS-3197 Enable release docker to log to stdout
+* Update refs to origin/feature/VFS-3213-change-storage-verification-mechanism.
+
+
+### 3.0.0-rc14
+
+* Update refs to origin/release/3.0.0-rc14.
+* Releasing new version 3.0.0-rc14
+* Deps update
+
+
 ### 3.0.0-rc14
 
 * Releasing new version 3.0.0-rc14
