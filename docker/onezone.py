@@ -131,7 +131,7 @@ def configure(config):
     users = get_users(config)
 
     r = do_request(users, requests.post,
-                   'https://127.0.0.1:9444/api/v3/onepanel/zone/configuration',
+                   'https://127.0.0.1:9443/api/v3/onepanel/zone/configuration',
                    headers={'content-type': 'application/x-yaml'},
                    data=yaml.dump(config),
                    verify=False)
@@ -148,7 +148,7 @@ def configure(config):
     log('\nConfiguring onezone:')
     while status == 'running':
         r = do_request(users, requests.get,
-                       'https://127.0.0.1:9444' + loc,
+                       'https://127.0.0.1:9443' + loc,
                        verify=False)
         if r.status_code != 200:
             raise ValueError('Unexpected configuration error\n{0}'
