@@ -4,6 +4,7 @@ MAINTAINER Krzysztof Trzepla <krzysztof.trzepla@gmail.com>
 # Build arguments
 ARG RELEASE
 ARG OZ_PANEL_VERSION
+ARG COUCHBASE_VERSION
 ARG CLUSTER_MANAGER_VERSION
 ARG OZ_WORKER_VERSION
 ARG ONEZONE_VERSION
@@ -36,6 +37,7 @@ RUN case ${RELEASE} in \
             ;; \
     esac && \
     sh onezone.sh oz-panel=${OZ_PANEL_VERSION}-1 && \
+    sh onezone.sh couchbase-server-community=${COUCHBASE_VERSION}-1 && \
     sh onezone.sh cluster-manager=${CLUSTER_MANAGER_VERSION}-1 && \
     sh onezone.sh oz-worker=${OZ_WORKER_VERSION}-1 && \
     sh onezone.sh onezone=${ONEZONE_VERSION}-1 && \

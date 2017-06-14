@@ -8,6 +8,9 @@ DOCKER_REG_PASSWORD     ?= ""
 ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always)
 endif
+ifeq ($(strip $(COUCHBASE_VERSION)),)
+COUCHBASE_VERSION       := 4.1.0-5005
+endif
 ifeq ($(strip $(CLUSTER_MANAGER_VERSION)),)
 CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always)
 endif
@@ -128,6 +131,7 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	cp -f onezone_meta/onezone.spec.template onezone_meta/onezone.spec
 	sed -i 's/{{onezone_version}}/$(ONEZONE_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{onezone_build}}/$(ONEZONE_BUILD)/g' onezone_meta/onezone.spec
+	sed -i 's/{{couchbase_version}}/$(COUCHBASE_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{cluster_manager_version}}/$(CLUSTER_MANAGER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
@@ -166,6 +170,7 @@ deb: deb_onepanel deb_oz_worker deb_cluster_manager
 	cp -f onezone_meta/onezone/DEBIAN/control.template onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{onezone_version}}/$(ONEZONE_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{onezone_build}}/$(ONEZONE_BUILD)/g' onezone_meta/onezone/DEBIAN/control
+	sed -i 's/{{couchbase_version}}/$(COUCHBASE_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{cluster_manager_version}}/$(CLUSTER_MANAGER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone/DEBIAN/control
@@ -203,6 +208,7 @@ docker:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
                           --password $(DOCKER_REG_PASSWORD) --build-arg RELEASE=$(DOCKER_RELEASE) \
                           --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
+                          --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
                           --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
                           --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
                           --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
