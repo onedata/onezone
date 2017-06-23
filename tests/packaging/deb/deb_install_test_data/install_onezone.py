@@ -19,12 +19,12 @@ oz_worker_package = \
 onezone_package = [path for path in packages if path.startswith('onezone')][0]
 
 # get couchbase
-check_call(['wget', 'http://packages.couchbase.com/releases/4.1.0/couchbase'
-                    '-server-community_4.1.0-ubuntu14.04_amd64.deb'])
+check_call(['wget', 'http://packages.couchbase.com/releases/4.5.1/couchbase'
+                    '-server-community_4.5.1-ubuntu14.04_amd64.deb'])
 
 # install packages
 check_call(['sh', '-c',
-            'dpkg -i couchbase-server-community_4.1.0-ubuntu14.04_amd64.deb '
+            'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb '
             '; apt-get -f -y install'
             ], stderr=STDOUT)
 check_call(['sh', '-c', 'dpkg -i /root/pkg/{package} ; apt-get -f -y '
