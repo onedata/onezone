@@ -9,14 +9,6 @@ CHANGELOG
 * VFS-3348 Update couchbase version to 4.5.1
 
 
-### 17.06.0.beta1
-
-* Update refs to origin/release/17.06.0.beta1.
-* VFS-3319 Update couchbase to version 4.5.1
-* Update refs to origin/feature/VFS-3319-integrate-new-datastore-with-old
-* VFS-3192 Specify couchbase version
-
-
 ### 3.0.0-rc16
 
 * Releasing new version 3.0.0-rc16
