@@ -28,7 +28,7 @@ OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
 
-.PHONY: docker package.tar.gz
+.PHONY: docker docker-dev package.tar.gz
 
 all: build
 
@@ -57,11 +57,7 @@ unpack = tar xzf $(1).tar.gz
 branch = $(shell git rev-parse --abbrev-ref HEAD)
 submodules:
 	./onedata_submodules.sh init
-ifeq ($(branch),develop)
-	./onedata_submodules.sh update --remote
-else
 	./onedata_submodules.sh update
-endif
 
 ##
 ## Build
@@ -204,13 +200,26 @@ package.tar.gz:
 ## Docker artifact
 ##
 
-docker:
+docker: docker-dev
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
-                          --password $(DOCKER_REG_PASSWORD) --build-arg RELEASE=$(DOCKER_RELEASE) \
-                          --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
-                          --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
-                          --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
-                          --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
-                          --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
-                          --name onezone \
-                          --publish --remove docker
+                      --password $(DOCKER_REG_PASSWORD) --build-arg RELEASE=$(DOCKER_RELEASE) \
+                      --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
+                      --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
+                      --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
+                      --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
+                      --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
+                      --name onezone \
+                      --publish --remove docker
+
+docker-dev:
+	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
+                      --password $(DOCKER_REG_PASSWORD) \
+                      --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
+                      --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
+                      --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
+                      --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
+                      --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
+                      --report docker-dev-build-report.txt \
+                      --short-report docker-dev-build-list.json \
+                      --name onezone-dev \
+                      --publish --remove docker-dev
