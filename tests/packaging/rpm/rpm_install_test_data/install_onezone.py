@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import json
 import requests
 import sys
@@ -25,23 +23,19 @@ onezone_package = \
     [path for path in packages if path.startswith('onezone') and
      path.endswith('.rpm')][0]
 
-# add onedata repository
-check_call(['curl', '-o', '/etc/yum.repos.d/onedata.repo',
-            'http://packages.onedata.org/yum/onedata_fedora_23.repo'])
-
 # get couchbase
-check_call(['wget', 'http://packages.couchbase.com/releases/4.1.0/couchbase'
-                    '-server-community-4.1.0-centos7.x86_64.rpm'])
+check_call(['wget', 'http://packages.couchbase.com/releases/4.5.1/couchbase'
+                    '-server-community-4.5.1-centos7.x86_64.rpm'])
 
-# install all
+# install packages
 check_call(['dnf', '-y', 'install',
-            'couchbase-server-community-4.1.0-centos7.x86_64.rpm'],
+            'couchbase-server-community-4.5.1-centos7.x86_64.rpm'],
            stderr=STDOUT)
-check_call(['dnf', '-y', 'install', '/root/pkg/' + oz_panel_package],
-           stderr=STDOUT)
-check_call(['dnf', '-y', 'install', '/root/pkg/' + cluster_manager_package],
-           stderr=STDOUT)
-check_call(['dnf', '--enablerepo=onedata', '-y', 'install',
+check_call(['dnf', '-y', '--enablerepo=onedata',
+            'install', '/root/pkg/' + oz_panel_package], stderr=STDOUT)
+check_call(['dnf', '-y', '--enablerepo=onedata',
+            'install', '/root/pkg/' + cluster_manager_package], stderr=STDOUT)
+check_call(['dnf', '-y', '--enablerepo=onedata', 'install',
             '/root/pkg/' + oz_worker_package], stderr=STDOUT)
 check_call(['dnf', '-y', 'install', '/root/pkg/' + onezone_package],
            stderr=STDOUT)
@@ -51,8 +45,8 @@ check_call(['service', 'oz_panel', 'status'])
 check_call(['ls', '/etc/cluster_manager/app.config'])
 check_call(['ls', '/etc/oz_worker/app.config'])
 
-# onezone configure and install
-with open('/root/data/install.yml', 'r') as f:
+# configure onezone
+with open('/root/data/config.yml', 'r') as f:
     r = requests.post(
         'https://127.0.0.1:9443/api/v3/onepanel/zone/configuration',
         auth=('admin', 'password'),
@@ -73,7 +67,7 @@ with open('/root/data/install.yml', 'r') as f:
 
 assert status == 'ok'
 
-# validate onezone is running
+# validate onezone configuration
 check_call(['service', 'cluster_manager', 'status'])
 check_call(['service', 'oz_worker', 'status'])
 

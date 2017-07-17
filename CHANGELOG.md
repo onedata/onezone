@@ -4,6 +4,69 @@
 CHANGELOG
 ---------
 
+### 17.06.0-beta6
+
+* Releasing new version 17.06.0-beta6
+
+
+### 17.06.0-beta4
+
+* Releasing new version 17.06.0-beta4
+
+
+### 17.06.0-beta3
+
+* VFS-3353 Enable user name/email set in update_refs.sh
+* Releasing new version 17.06.0-beta3
+
+
+### 17.06.0-beta2
+
+* VFS-3348 Update couchbase version to 4.5.1
+
+
+### 3.0.0-rc16
+
+* Releasing new version 3.0.0-rc16
+
+
+### 3.0.0-rc15
+
+* Releasing new version 3.0.0-rc15
+* VFS-3197 Enable release docker to log to stdout
+* Update refs to origin/feature/VFS-3213-change-storage-verification-mechanism.
+
+
+### 3.0.0-rc14
+
+* Update refs to origin/release/3.0.0-rc14.
+* Releasing new version 3.0.0-rc14
+* Deps update
+
+
+### 3.0.0-rc14
+
+* Releasing new version 3.0.0-rc14
+
+
+### 3.0.0-rc13
+
+* Releasing new version 3.0.0-rc13
+
+
+### 3.0.0-rc12
+
+* Enable graceful stop on SIGTERM
+* Update refs to origin/release/3.0.0-rc12.
+* VFS-2901 Refactor packages tests
+* VFS-2733 Add excluded path to docker entrypoint
+
+
+### 3.0.0-rc11
+
+* Releasing new version 3.0.0-rc11
+
+
 ### 3.0.0-rc10
 
 * Releasing new version 3.0.0-rc10

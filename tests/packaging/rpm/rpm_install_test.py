@@ -1,44 +1,61 @@
-from tests import test_utils
+import pytest
 from tests.test_common import *
-
-package_dir = os.path.join(os.getcwd(), 'package/fedora-23-x86_64/x86_64')
-scripts_dir = os.path.dirname(test_utils.test_file('rpm_install_script.py'))
-
 from environment import docker, env
-import sys
+
+file_dir = os.path.dirname(os.path.realpath(__file__))
 
 
-class TestRpmInstallation:
-    # Test if installation has finished successfully
-    def test_installation(self):
-        command = 'dnf -y update && ' \
-                  'dnf install -y ca-certificates curl python python-setuptools wget && ' \
-                  'easy_install requests && ' \
-                  'python /root/data/rpm_install_script.py'
+class Distribution(object):
 
-        container = docker.run(tty=True,
-                               interactive=True,
-                               detach=True,
-                               image='onedata/fedora-systemd:23',
-                               hostname='devel.localhost.local',
-                               workdir="/root",
-                               run_params=['--privileged=true'],
-                               stdin=sys.stdin,
-                               stdout=sys.stdout,
-                               stderr=sys.stderr,
-                               volumes=[
-                                   (package_dir, '/root/pkg', 'ro'),
-                                   (scripts_dir, '/root/data', 'ro')
-                               ],
-                               reflect=[('/sys/fs/cgroup', 'rw')])
+    def __init__(self, request):
+        package_dir = os.path.join(os.getcwd(), 'package/{0}/x86_64'.
+                                   format(request.param))
+        config_dir = os.path.join(file_dir, 'rpm_install_test_data')
 
-        try:
-            assert 0 == docker.exec_(container,
-                                     command=command,
-                                     stdin=sys.stdin,
-                                     stdout=sys.stdout,
-                                     stderr=sys.stderr,
-                                     interactive=True,
-                                     tty=True)
-        finally:
-            docker.remove([container], force=True, volumes=True)
+        self.name = request.param
+        self.container = docker.run(interactive=True,
+                                    tty=True,
+                                    detach=True,
+                                    image='onedata/fedora-systemd:23',
+                                    hostname='onezone.dev.local',
+                                    privileged=True,
+                                    stdin=sys.stdin,
+                                    stdout=sys.stdout,
+                                    stderr=sys.stderr,
+                                    volumes=[
+                                        (package_dir, '/root/pkg', 'ro'),
+                                        (config_dir, '/root/data', 'ro')
+                                    ],
+                                    reflect=[('/sys/fs/cgroup', 'rw')])
+
+        request.addfinalizer(lambda: docker.remove(
+            [self.container], force=True, volumes=True))
+
+
+@pytest.fixture(scope='module')
+def setup_command():
+    return 'dnf -y update && ' \
+        'dnf -y install ca-certificates python wget python-setuptools && ' \
+        'easy_install requests && ' \
+        'wget -qO- "{url}/yum/onedata_fedora_23.repo" > /etc/yum.repos.d/onedata.repo' \
+        .format(url='http://packages.onedata.org')
+
+
+@pytest.fixture(scope='module',
+                params=['fedora-23-x86_64'])
+def onezone(request, setup_command):
+    distribution = Distribution(request)
+
+    assert 0 == docker.exec_(distribution.container,
+                             interactive=True,
+                             tty=True,
+                             command=setup_command)
+
+    return distribution
+
+
+def test_onezone_installation(onezone):
+    assert 0 == docker.exec_(onezone.container,
+                             interactive=True,
+                             tty=True,
+                             command='python /root/data/install_onezone.py')

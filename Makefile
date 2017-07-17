@@ -1,4 +1,4 @@
-# distro for package building (oneof: wily, fedora-23-x86_64)
+# distro for package building (oneof: xenial, fedora-23-x86_64)
 DISTRIBUTION            ?= none
 DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
@@ -7,6 +7,9 @@ DOCKER_REG_PASSWORD     ?= ""
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always)
+endif
+ifeq ($(strip $(COUCHBASE_VERSION)),)
+COUCHBASE_VERSION       := 4.5.1-2844
 endif
 ifeq ($(strip $(CLUSTER_MANAGER_VERSION)),)
 CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always)
@@ -25,7 +28,7 @@ OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
 
-.PHONY: docker package.tar.gz
+.PHONY: docker docker-dev package.tar.gz
 
 all: build
 
@@ -54,11 +57,7 @@ unpack = tar xzf $(1).tar.gz
 branch = $(shell git rev-parse --abbrev-ref HEAD)
 submodules:
 	./onedata_submodules.sh init
-ifeq ($(branch),develop)
-	./onedata_submodules.sh update --remote
-else
 	./onedata_submodules.sh update
-endif
 
 ##
 ## Build
@@ -98,7 +97,7 @@ artifact_onepanel:
 ##
 
 test_packaging:
-	./test_run.py --test-type packaging --test-dir tests/packaging -s
+	./test_run.py --test-type packaging -vvv --test-dir tests/packaging -s
 
 ##
 ## Clean
@@ -128,6 +127,7 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	cp -f onezone_meta/onezone.spec.template onezone_meta/onezone.spec
 	sed -i 's/{{onezone_version}}/$(ONEZONE_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{onezone_build}}/$(ONEZONE_BUILD)/g' onezone_meta/onezone.spec
+	sed -i 's/{{couchbase_version}}/$(COUCHBASE_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{cluster_manager_version}}/$(CLUSTER_MANAGER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
@@ -166,6 +166,7 @@ deb: deb_onepanel deb_oz_worker deb_cluster_manager
 	cp -f onezone_meta/onezone/DEBIAN/control.template onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{onezone_version}}/$(ONEZONE_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{onezone_build}}/$(ONEZONE_BUILD)/g' onezone_meta/onezone/DEBIAN/control
+	sed -i 's/{{couchbase_version}}/$(COUCHBASE_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{cluster_manager_version}}/$(CLUSTER_MANAGER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone/DEBIAN/control
@@ -199,12 +200,26 @@ package.tar.gz:
 ## Docker artifact
 ##
 
-docker:
+docker: docker-dev
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
-                          --password $(DOCKER_REG_PASSWORD) --build-arg RELEASE=$(DOCKER_RELEASE) \
-                          --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
-                          --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
-                          --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
-                          --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
-                          --name onezone \
-                          --publish --remove docker
+                      --password $(DOCKER_REG_PASSWORD) --build-arg RELEASE=$(DOCKER_RELEASE) \
+                      --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
+                      --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
+                      --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
+                      --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
+                      --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
+                      --name onezone \
+                      --publish --remove docker
+
+docker-dev:
+	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
+                      --password $(DOCKER_REG_PASSWORD) \
+                      --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
+                      --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
+                      --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
+                      --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
+                      --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
+                      --report docker-dev-build-report.txt \
+                      --short-report docker-dev-build-list.json \
+                      --name onezone-dev \
+                      --publish --remove docker-dev

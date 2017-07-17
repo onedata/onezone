@@ -1,44 +1,64 @@
-from tests import test_utils
+import pytest
 from tests.test_common import *
-
-package_dir = os.path.join(os.getcwd(), 'package/wily/binary-amd64')
-scripts_dir = os.path.dirname(test_utils.test_file('deb_install_script.py'))
-
 from environment import docker, env
-import sys
+
+file_dir = os.path.dirname(os.path.realpath(__file__))
 
 
-class TestDebInstallation:
-    # Test if installation has finished successfully
-    def test_installation(self):
-        command = 'apt-get update && ' \
-                  'apt-get install -y ca-certificates curl python python-setuptools wget && ' \
-                  'easy_install requests && ' \
-                  'python /root/data/deb_install_script.py'
+class Distribution(object):
 
-        container = docker.run(tty=True,
-                               interactive=True,
-                               detach=True,
-                               image='ubuntu:15.10',
-                               hostname='devel.localhost.local',
-                               workdir="/root",
-                               run_params=['--privileged=true'],
-                               stdin=sys.stdin,
-                               stdout=sys.stdout,
-                               stderr=sys.stderr,
-                               volumes=[
-                                   (package_dir, '/root/pkg', 'ro'),
-                                   (scripts_dir, '/root/data', 'ro')
-                               ],
-                               reflect=[('/sys/fs/cgroup', 'rw')])
+    def __init__(self, request):
+        package_dir = os.path.join(os.getcwd(), 'package/{0}/binary-amd64'.
+                                   format(request.param))
+        config_dir = os.path.join(file_dir, 'deb_install_test_data')
 
-        try:
-            assert 0 == docker.exec_(container,
-                                     command=command,
-                                     stdin=sys.stdin,
-                                     stdout=sys.stdout,
-                                     stderr=sys.stderr,
-                                     interactive=True,
-                                     tty=True)
-        finally:
-            docker.remove([container], force=True, volumes=True)
+        self.name = request.param
+        self.image = 'ubuntu:{0}'.format(self.name)
+        self.container = docker.run(interactive=True,
+                                    tty=True,
+                                    detach=True,
+                                    image=self.image,
+                                    hostname='onezone.dev.local',
+                                    stdin=sys.stdin,
+                                    stdout=sys.stdout,
+                                    stderr=sys.stderr,
+                                    volumes=[
+                                        (package_dir, '/root/pkg', 'ro'),
+                                        (config_dir, '/root/data', 'ro')
+                                    ])
+
+        request.addfinalizer(lambda: docker.remove(
+            [self.container], force=True, volumes=True))
+
+
+@pytest.fixture(scope='module')
+def setup_command():
+    return 'apt-get update && ' \
+        'apt-get install -y ca-certificates locales python wget python-setuptools && ' \
+        'easy_install requests && ' \
+        'wget -qO- {url}/onedata.gpg.key | apt-key add - && ' \
+        'echo "deb {url}/apt/ubuntu/{{dist}} {{dist}} main" > /etc/apt/sources.list.d/onedata.list && ' \
+        'echo "deb-src {url}/apt/ubuntu/{{dist}} {{dist}} main" >> /etc/apt/sources.list.d/onedata.list && ' \
+        'apt-get update && ' \
+        'locale-gen en_US.UTF-8'.format(url='http://packages.onedata.org')
+
+
+@pytest.fixture(scope='module',
+                params=['xenial'])
+def onezone(request, setup_command):
+    distribution = Distribution(request)
+    command = setup_command.format(dist=distribution.name)
+
+    assert 0 == docker.exec_(distribution.container,
+                             interactive=True,
+                             tty=True,
+                             command=command)
+
+    return distribution
+
+
+def test_onezone_installation(onezone):
+    assert 0 == docker.exec_(onezone.container,
+                             interactive=True,
+                             tty=True,
+                             command='python /root/data/install_onezone.py')
