@@ -4,9 +4,9 @@
 CHANGELOG
 ---------
 
-### 17.06.1
+### 17.06.0-rc3
 
-* Releasing new version 17.06.1
+* Releasing new version 17.06.0-rc3
 
 
 ### 17.06.0-rc2
