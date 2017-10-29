@@ -28,16 +28,16 @@ check_call(['wget', 'http://packages.couchbase.com/releases/4.5.1/couchbase'
                     '-server-community-4.5.1-centos7.x86_64.rpm'])
 
 # install packages
-check_call(['dnf', '-y', 'install',
+check_call(['yum', '-y', 'install',
             'couchbase-server-community-4.5.1-centos7.x86_64.rpm'],
            stderr=STDOUT)
-check_call(['dnf', '-y', '--enablerepo=onedata',
+check_call(['yum', '-y', '--enablerepo=onedata',
             'install', '/root/pkg/' + oz_panel_package], stderr=STDOUT)
-check_call(['dnf', '-y', '--enablerepo=onedata',
+check_call(['yum', '-y', '--enablerepo=onedata',
             'install', '/root/pkg/' + cluster_manager_package], stderr=STDOUT)
-check_call(['dnf', '-y', '--enablerepo=onedata', 'install',
+check_call(['yum', '-y', '--enablerepo=onedata', 'install',
             '/root/pkg/' + oz_worker_package], stderr=STDOUT)
-check_call(['dnf', '-y', 'install', '/root/pkg/' + onezone_package],
+check_call(['yum', '-y', 'install', '/root/pkg/' + onezone_package],
            stderr=STDOUT)
 
 # package installation validation

@@ -34,8 +34,9 @@ class Distribution(object):
 
 @pytest.fixture(scope='module')
 def setup_command():
-    return 'dnf -y update && ' \
-        'dnf -y install ca-certificates python wget python-setuptools && ' \
+    return 'yum -y update && ' \
+        'yum -y install epel-release && ' \
+        'yum -y install ca-certificates python wget python-setuptools && ' \
         'easy_install requests && ' \
         'wget -qO- "{url}/yum/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
         .format(url='http://packages.onedata.org')
