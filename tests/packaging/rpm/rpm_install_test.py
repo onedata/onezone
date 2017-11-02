@@ -16,7 +16,7 @@ class Distribution(object):
         self.container = docker.run(interactive=True,
                                     tty=True,
                                     detach=True,
-                                    image='onedata/fedora-systemd:23',
+                                    image='centos:7',
                                     hostname='onezone.dev.local',
                                     privileged=True,
                                     stdin=sys.stdin,
@@ -34,15 +34,16 @@ class Distribution(object):
 
 @pytest.fixture(scope='module')
 def setup_command():
-    return 'dnf -y update && ' \
-        'dnf -y install ca-certificates python wget python-setuptools && ' \
+    return 'yum -y update && ' \
+        'yum -y install epel-release && ' \
+        'yum -y install ca-certificates python wget python-setuptools && ' \
         'easy_install requests && ' \
-        'wget -qO- "{url}/yum/onedata_fedora_23.repo" > /etc/yum.repos.d/onedata.repo' \
+        'wget -qO- "{url}/yum/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
         .format(url='http://packages.onedata.org')
 
 
 @pytest.fixture(scope='module',
-                params=['fedora-23-x86_64'])
+                params=['centos-7-x86_64'])
 def onezone(request, setup_command):
     distribution = Distribution(request)
 
