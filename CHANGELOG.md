@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 17.06.0-rc9
+
+* Releasing new version 17.06.0-rc9
+
+
 ### 17.06.0-rc8
 
 * VFS-3815 Switched dnf to yum in packaging tests
