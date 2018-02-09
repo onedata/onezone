@@ -1,5 +1,5 @@
 cluster:
-  domainName: "dev.local"
+  domainName: "test.local"
   nodes:
     n1:
       hostname: "onezone"
@@ -15,7 +15,7 @@ cluster:
       - "n1"
 onezone:
   name: "Example"
-  domainName: "onezone.dev.local"
+  domainName: "onezone.test.local"
 onepanel:
   users:
     "admin1":

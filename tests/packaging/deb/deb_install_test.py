@@ -18,7 +18,7 @@ class Distribution(object):
                                     tty=True,
                                     detach=True,
                                     image=self.image,
-                                    hostname='onezone.dev.local',
+                                    hostname='onezone.test.local',
                                     stdin=sys.stdin,
                                     stdout=sys.stdout,
                                     stderr=sys.stderr,

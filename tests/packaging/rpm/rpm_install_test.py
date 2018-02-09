@@ -17,7 +17,7 @@ class Distribution(object):
                                     tty=True,
                                     detach=True,
                                     image='centos:7',
-                                    hostname='onezone.dev.local',
+                                    hostname='onezone.test.local',
                                     privileged=True,
                                     stdin=sys.stdin,
                                     stdout=sys.stdout,
