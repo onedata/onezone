@@ -294,13 +294,13 @@ if __name__ == '__main__':
         if generate_test_web_cert:
             domain = os.environ.get('ONEPANEL_GENERATED_CERT_DOMAIN')
             set_generate_test_web_cert(
-                '/etc/op_panel/app.config', generate_test_web_cert, domain)
+                '/etc/oz_panel/app.config', generate_test_web_cert, domain)
 
         trust_test_ca = os.environ.get(
             'ONEPANEL_TRUST_TEST_CA'
         )
         if trust_test_ca:
-            set_trust_test_ca('/etc/op_panel/app.config', trust_test_ca)
+            set_trust_test_ca('/etc/oz_panel/app.config', trust_test_ca)
 
         start_onepanel()
 
