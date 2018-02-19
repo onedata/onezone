@@ -4,6 +4,53 @@
 CHANGELOG
 ---------
 
+### 17.06.2
+
+* Releasing new version 17.06.2
+
+
+### 17.06.1
+
+* Releasing new version 17.06.1
+
+
+### 17.06.0-rc9
+
+* Releasing new version 17.06.0-rc9
+
+
+### 17.06.0-rc8
+
+* VFS-3815 Switched dnf to yum in packaging tests
+* VFS-3815 Added prefix to package builder images
+* VFS-3815 Modified packaging tests for CentOS 7
+
+
+### 17.06.0-rc7
+
+* Releasing new version 17.06.0-rc7
+
+
+### 17.06.0-rc6
+
+* Releasing new version 17.06.0-rc6
+
+
+### 17.06.0-rc5
+
+* Releasing new version 17.06.0-rc5
+
+
+### 17.06.0-rc4
+
+* Releasing new version 17.06.0-rc4
+
+
+### 17.06.0-rc3
+
+* Releasing new version 17.06.0-rc3
+
+
 ### 17.06.0-rc2
 
 * Releasing new version 17.06.0-rc2
