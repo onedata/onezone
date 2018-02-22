@@ -43,7 +43,7 @@ RUN case ${RELEASE} in \
     sh onezone.sh onezone=${ONEZONE_VERSION}-1 && \
     rm -f onezone.sh
 
-EXPOSE 53 53/udp 80 443 5555 5556 6665 6666 7443 8443 8876 8877 9443
+EXPOSE 53 53/udp 80 443 9443
 
 # Add entrypoint scripts
 ADD onezone.sh /root/onezone.sh
