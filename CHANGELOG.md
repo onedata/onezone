@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 18.02.0-beta2
+
+* VFS-4126 Remove obsolete port exposes from Dockerfiles
+
+
 ### 18.02.0-beta1
 
 * Releasing new version 18.02.0-beta1
