@@ -1,4 +1,4 @@
-FROM onedata/worker:v47
+FROM onedata/worker:v57
 MAINTAINER Krzysztof Trzepla <krzysztof.trzepla@gmail.com>
 
 # Build arguments
