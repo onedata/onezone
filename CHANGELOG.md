@@ -6,7 +6,7 @@ CHANGELOG
 
 ### 18.02.0-beta5
 
-* Releasing new version 18.02.0-beta5
+* VFS-4267 Enable building using OpenSSL 1.1.0 dependencies
 
 
 ### 18.02.0-beta4
