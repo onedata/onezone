@@ -1,4 +1,5 @@
-FROM ubuntu:16.04
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
 MAINTAINER Krzysztof Trzepla <krzysztof.trzepla@gmail.com>
 
 # Build arguments
@@ -11,10 +12,10 @@ ARG ONEZONE_VERSION
 ARG ONEPANEL_AUTOSTART=false
 
 # Add users and groups
-RUN groupadd -g 110 onedata && \
-    useradd -u 107 -g 110 -d /var/lib/oz_panel oz_panel && \
-    useradd -u 108 -g 110 -d /var/lib/cluster_manager cluster_manager && \
-    useradd -u 109 -g 110 -d /var/lib/oz_worker oz_worker
+RUN groupadd -g 150 onedata && \
+    useradd -u 151 -g 150 -d /var/lib/oz_panel oz_panel && \
+    useradd -u 152 -g 150 -d /var/lib/cluster_manager cluster_manager && \
+    useradd -u 153 -g 150 -d /var/lib/oz_worker oz_worker
 
 # onedata deps ppa
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C211375C && \
