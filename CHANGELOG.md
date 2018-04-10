@@ -6,6 +6,7 @@ CHANGELOG
 
 ### 18.02.0-beta5
 
+* VFS-3622 Merged docker-dev with docker. Added possibility to run service from sources
 * VFS-4267 Enable building using OpenSSL 1.1.0 dependencies
 
 
