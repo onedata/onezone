@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 18.02.0-beta6
+
+* Releasing new version 18.02.0-beta6
+
+
 ### 18.02.0-beta5
 
 * VFS-3622 Merged docker-dev with docker. Added possibility to run service from sources
