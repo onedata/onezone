@@ -77,8 +77,23 @@ def start_onepanel():
         else:
             sp.check_call(['service', 'oz_panel', 'start'], stdout=null,
                           stderr=null)
+
+    log('Waiting for onepanel REST to be available (may require other nodes to start)')
+
+    wait_for_rest_listener()
+
     log('[  OK  ]')
 
+
+def wait_for_rest_listener():
+    connected = False
+    while not connected:
+        try:
+            requests.get('https://127.0.0.1:9443/api/v3/onepanel/', verify=False)
+        except requests.ConnectionError:
+            time.sleep(1)
+        else:
+            connected = True
 
 def format_step(step):
     service, action = step.split(':')
