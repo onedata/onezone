@@ -124,6 +124,10 @@ def configure(config):
                    data=yaml.dump(config),
                    verify=False)
 
+    if r.status_code == 400:
+        log("Cluster already configured, resuming...")
+        return
+
     if r.status_code != 201 and r.status_code != 204:
         raise ValueError('Failed to start configuration process (code: {0})\n'
                          'For more information please check the logs.'.format(r.status_code))
@@ -282,8 +286,10 @@ if __name__ == '__main__':
 
         configured = False
         batch_mode = os.environ.get('ONEPANEL_BATCH_MODE', 'false')
-        batch_config = get_batch_config()
+
         if batch_mode.lower() == 'true':
+            print('Configuring onezone')
+            batch_config = get_batch_config()
             configure(batch_config)
             configured = True
 
