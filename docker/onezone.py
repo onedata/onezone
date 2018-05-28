@@ -335,7 +335,7 @@ if __name__ == '__main__':
         if batch_mode.lower() == 'true':
             batch_config = get_batch_config()
             if configure(batch_config):
-                log('\nCongratulations! New onezone deployment finished')
+                log('\nCongratulations! New onezone deployment successfully started.')
             else:
                 wait_for_workers(batch_config)
                 log('\nExisting onezone deployment resumed work')
