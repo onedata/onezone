@@ -4,6 +4,14 @@
 CHANGELOG
 ---------
 
+### 18.02.0-rc4
+
+* VFS-4278 Change log message in docker entrypoint
+* VFS-4278 Use nagios to wait for cluster to resume work
+* VFS-4278 Wait for rest listener to start
+* VFS-4278 Allow failed configuration for existing deployment
+
+
 ### 18.02.0-rc3
 
 * Releasing new version 18.02.0-rc3
