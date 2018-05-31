@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 18.02.0-rc5
+
+* Releasing new version 18.02.0-rc5
+
+
 ### 18.02.0-rc4
 
 * VFS-4278 Change log message in docker entrypoint
