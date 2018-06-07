@@ -4,6 +4,12 @@
 CHANGELOG
 ---------
 
+### 18.02.0-rc7
+
+* VFS-4474 Display error details on configuration error
+* VFS-4278 Better detection of bad credentials error in entrypoint
+
+
 ### 18.02.0-rc6
 
 * Releasing new version 18.02.0-rc6
