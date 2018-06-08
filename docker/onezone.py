@@ -148,7 +148,7 @@ def configure(config):
                    data=yaml.dump(config),
                    verify=False)
 
-    if r.status_code == 400:
+    if r.status_code == 409:
         return False
 
     if r.status_code != 201 and r.status_code != 204:
@@ -203,8 +203,6 @@ def format_error_hosts(hosts):
 
 # Throws on connection nerror
 def wait_for_workers(config):
-    log("Waiting for existing cluster to start")
-
     url = 'https://127.0.0.1:9443/api/v3/onepanel/zone/nagios'
     while not nagios_up(url, config):
         time.sleep(1)
@@ -348,8 +346,9 @@ if __name__ == '__main__':
             if configure(batch_config):
                 log('\nCongratulations! New onezone deployment successfully started.')
             else:
+                log("\nWaiting for existing cluster to start...")
                 wait_for_workers(batch_config)
-                log('\nExisting onezone deployment resumed work')
+                log('Existing onezone deployment resumed work.')
 
         show_details()
     except Exception as e:
