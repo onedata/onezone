@@ -35,6 +35,10 @@ APP_CONFIG_PACKAGES_PATH = '/etc/oz_panel/app.config'
 VM_ARGS_PACKAGES_PATH = '/etc/oz_panel/vm.args'
 
 
+class AuthenticationException(ValueError):
+    pass
+
+
 def log(message, end='\n'):
     sys.stdout.write(message + end)
     sys.stdout.flush()
@@ -74,7 +78,7 @@ def set_trust_test_ca(file_path, trust_test_ca):
 
 
 def start_onepanel():
-    log('Starting oz_panel', '\t')
+    log('Starting oz_panel...')
     with open(os.devnull, 'w') as null:
         if os.environ.get(ONEPANEL_OVERRIDE):
             sp.check_call([os.path.join(os.environ.get(ONEPANEL_OVERRIDE),
@@ -85,7 +89,7 @@ def start_onepanel():
                           stderr=null)
 
     wait_for_rest_listener()
-    log('[  OK  ]')
+    log('[  OK  ] oz_panel started')
 
 
 def wait_for_rest_listener():
@@ -96,7 +100,8 @@ def wait_for_rest_listener():
             requests.get('https://127.0.0.1:9443/api/v3/onepanel/', verify=False)
         except requests.ConnectionError:
             if first:
-                log('Waiting for onepanel server to be available (may require starting other cluster nodes)')
+                log('Waiting for oz_panel server to be available\n'
+                    '(may require starting other cluster nodes)\n')
                 first = False
             time.sleep(1)
         else:
@@ -125,7 +130,7 @@ def do_request(users, request, *args, **kwargs):
         if r.status_code != 401 and r.status_code != 403:
             return r
 
-    raise ValueError('Authorization error.\n'
+    raise AuthenticationException('Authorization error.\n'
                      'Please ensure that valid admin credentials are present\n'
                      'in the onepanel.users section of the configuration.')
 
@@ -148,12 +153,16 @@ def configure(config):
                    data=yaml.dump(config),
                    verify=False)
 
-    if r.status_code == 400:
+    if r.status_code == 409:
         return False
 
     if r.status_code != 201 and r.status_code != 204:
-        raise ValueError('Failed to start configuration process (code: {0})\n'
-                         'For more information please check the logs.'.format(r.status_code))
+        raise ValueError(
+            'Failed to start configuration process, the response was:\n'
+            '  code: {0}\n'
+            '  body: {1}\n'
+            'For more information please check the logs.'.format(r.status_code,
+                                                                 r.text))
 
     loc = r.headers['location']
     status = 'running'
@@ -203,8 +212,6 @@ def format_error_hosts(hosts):
 
 # Throws on connection nerror
 def wait_for_workers(config):
-    log("Waiting for existing cluster to start")
-
     url = 'https://127.0.0.1:9443/api/v3/onepanel/zone/nagios'
     while not nagios_up(url, config):
         time.sleep(1)
@@ -345,11 +352,18 @@ if __name__ == '__main__':
         batch_mode = os.environ.get('ONEPANEL_BATCH_MODE', 'false')
         if batch_mode.lower() == 'true':
             batch_config = get_batch_config()
-            if configure(batch_config):
-                log('\nCongratulations! New onezone deployment successfully started.')
-            else:
-                wait_for_workers(batch_config)
-                log('\nExisting onezone deployment resumed work')
+            try:
+                if configure(batch_config):
+                    log('\nCongratulations! New onezone deployment successfully started.')
+                else:
+                    log("\nWaiting for existing cluster to start...")
+                    wait_for_workers(batch_config)
+                    log('Existing onezone deployment resumed work.')
+            except AuthenticationException as e:
+                log('The launch script cannot access onepanel to manage the deployment process.\n'
+                    'Please ensure that valid admin credentials are present\n'
+                    'in the onepanel.users section of the configuration\n'
+                    'or oversee the cluster status manually.')
 
         show_details()
     except Exception as e:
