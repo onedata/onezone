@@ -4,6 +4,13 @@
 CHANGELOG
 ---------
 
+### 18.02.0-rc9
+
+* VFS-4532 Create new config file instead of using regexps
+* VFS-4367 Do not fail cluster restart when admin credentials are missing
+* VFS-4367 Expect 409 when configuring existing cluster
+
+
 ### 18.02.0-rc8
 
 * Releasing new version 18.02.0-rc8
