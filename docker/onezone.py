@@ -372,7 +372,7 @@ if __name__ == '__main__':
         show_details()
     except Exception as e:
         log('\n{0}'.format(e))
-        if os.environ.get('ONEPANEL_DEBUG_MODE'):
+        if os.environ.get('ONEPANEL_DEBUG_MODE', 'false').lower() == 'true':
             pass
         else:
             sys.exit(1)
