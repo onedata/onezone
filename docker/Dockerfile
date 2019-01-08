@@ -28,6 +28,7 @@ RUN apt-get -y update && \
     apt-get -y install ca-certificates curl locales net-tools \
                        python python-setuptools python-yaml traceroute vim && \
     easy_install requests && \
+    iproute dnsutils iperf3 && \
     apt-get clean
 
 # Generate locale
