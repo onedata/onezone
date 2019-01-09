@@ -26,10 +26,11 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C211375C && \
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y install ca-certificates curl locales net-tools \
-                       python python-setuptools python-yaml traceroute vim && \
-    easy_install requests && \
-    iproute dnsutils iperf3 && \
+                       python python-setuptools python-yaml \
+                       iproute dnsutils iperf3 traceroute vim && \
     apt-get clean
+
+RUN easy_install requests
 
 # Generate locale
 RUN locale-gen en_US.UTF-8
