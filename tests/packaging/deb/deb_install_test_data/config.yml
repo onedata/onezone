@@ -1,8 +1,7 @@
 cluster:
-  domainName: "test.local"
   nodes:
     n1:
-      hostname: "onezone"
+      hostname: "onezone.test.local"
   managers:
     mainNode: "n1"
     nodes:
@@ -16,6 +15,8 @@ cluster:
 onezone:
   name: "Example"
   domainName: "onezone.test.local"
+  policies:
+    subdomainDelegation: false
 onepanel:
   users:
     "admin1":
