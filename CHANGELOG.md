@@ -4,6 +4,13 @@
 CHANGELOG
 ---------
 
+### 18.02.1
+
+* VFS-5154 Updated Onezone package test deployment configs
+* Fix badly formatted apt-get command in Dockerfile
+* added iproute, dnsutils, and iperf3 packages to Dockerfile
+
+
 ### 18.02.0-rc13
 
 * Releasing new version 18.02.0-rc13
