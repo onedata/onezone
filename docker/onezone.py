@@ -247,23 +247,19 @@ def format_error_hosts(hosts):
 
 
 # Throws on connection nerror
-def wait_for_workers(config):
+def wait_for_workers():
     url = 'https://127.0.0.1:9443/api/v3/onepanel/zone/nagios'
-    while not nagios_up(url, config):
+    while not nagios_up(url):
         time.sleep(1)
 
 
-def nagios_up(url, config):
-    try:
-        r = do_request(get_root_password(), requests.get, url, verify=False)
-        if r.status_code != requests.codes.ok:
-            return False
+def nagios_up(url):
+    r = do_request(get_root_password(), requests.get, url, verify=False)
+    if r.status_code != requests.codes.ok:
+        return False
 
-        healthdata = eTree.fromstring(r.text)
-        return healthdata.attrib['status'] == 'ok'
-    except ValueError:
-        log("Cannot track cluster start progress since there are no valid "
-            "credentials in batch configuration")
+    healthdata = eTree.fromstring(r.text)
+    return healthdata.attrib['status'] == 'ok'
 
 
 def get_container_id():
@@ -381,7 +377,7 @@ if __name__ == '__main__':
                     log('\nCongratulations! New onezone deployment successfully started.')
                 else:
                     log("\nWaiting for existing cluster to start...")
-                    wait_for_workers(batch_config)
+                    wait_for_workers()
                     log('Existing onezone deployment resumed work.')
             except AuthenticationException as e:
                 log('The launch script cannot access onepanel to manage the deployment process.\n'
