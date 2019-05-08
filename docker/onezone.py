@@ -139,14 +139,17 @@ def set_emergency_passphrase(passphrase):
     if passphrase is None:
         return
 
-    r = do_request(passphrase, requests.put,
-               'https://127.0.0.1:9443/api/v3/onepanel/emergency_passphrase',
-                   headers={'content-type': 'application/json'},
-                   data=json.dumps({'newPassphrase': passphrase}),
-                   verify=False)
+    r = requests.put('https://127.0.0.1:9443/api/v3/onepanel/emergency_passphrase',
+                     headers={'content-type': 'application/json'},
+                     data=json.dumps({'newPassphrase': passphrase}),
+                     verify=False)
+    if r.status_code == 403:
+        raise AuthenticationException('Could not set Onepanel emergency passphrase due to '
+                                      'authentication error: {} {}'
+                                      .format(r.status_code, r.text))
     if r.status_code != 204:
-        raise ValueError('Could not set Onepanel emergency passphrase: '
-                         + r.status_code + ' ' + r.text)
+        raise ValueError('Could not set Onepanel emergency passphrase: {} {}'
+                         .format(r.status_code, r.text))
 
 
 def do_request(passphrase, request, *args, **kwargs):
