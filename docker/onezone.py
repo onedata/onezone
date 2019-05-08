@@ -131,13 +131,13 @@ def format_step(step):
 
 # Returns emergency passphrase provided in environment variable
 # or None if it is not set
-def get_passphrase():
+def get_emergency_passphrase():
     return os.environ.get(EMERGENCY_PASSPHRASE_VARIABLE)
 
 
 def set_emergency_passphrase(passphrase):
     if passphrase is None:
-        return
+        raise AuthenticationException("Missing " + EMERGENCY_PASSPHRASE_VARIABLE + " env variable")
 
     r = requests.put('https://127.0.0.1:9443/api/v3/onepanel/emergency_passphrase',
                      headers={'content-type': 'application/json'},
@@ -150,6 +150,7 @@ def set_emergency_passphrase(passphrase):
     if r.status_code != 204:
         raise ValueError('Could not set Onepanel emergency passphrase: {} {}'
                          .format(r.status_code, r.text))
+    return True
 
 
 def do_request(passphrase, request, *args, **kwargs):
@@ -179,7 +180,7 @@ def get_batch_config():
 
 # returns False if configuration was skipped because of existing deployment
 def configure(config):
-    passphrase = get_passphrase()
+    passphrase = get_emergency_passphrase()
 
     try:
         set_emergency_passphrase(passphrase)
@@ -258,7 +259,7 @@ def wait_for_workers():
 
 
 def nagios_up(url):
-    r = do_request(get_passphrase(), requests.get, url, verify=False)
+    r = do_request(get_emergency_passphrase(), requests.get, url, verify=False)
     if r.status_code != requests.codes.ok:
         return False
 
