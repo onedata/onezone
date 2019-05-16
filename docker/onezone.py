@@ -41,7 +41,8 @@ VM_ARGS_PACKAGES_PATH = '/etc/oz_panel/vm.args'
 
 class MissingVariableError(Exception):
     """Indicates operation error caused by missing environment variable"""
-    def __init__(self, variable_name, message):
+    def __init__(self, variable_name):
+        message = "Missing {} environment variable".format(variable_name)
         super(Exception, self).__init__(message)
         self.variable_name = variable_name
 
@@ -138,17 +139,14 @@ def format_step(step):
 
 
 # Returns emergency passphrase provided in environment variable
-# or None if it is not set
 def get_emergency_passphrase():
-    return os.environ.get(EMERGENCY_PASSPHRASE_VARIABLE)
+    passphrase = os.environ.get(EMERGENCY_PASSPHRASE_VARIABLE)
+    if passphrase is None:
+        raise MissingVariableError(EMERGENCY_PASSPHRASE_VARIABLE)
+    return passphrase
 
 
 def set_emergency_passphrase(passphrase):
-    if passphrase is None:
-        raise MissingVariableError(EMERGENCY_PASSPHRASE_VARIABLE,
-            "Missing {} env variable necessary to access the Onepanel"
-            .format(EMERGENCY_PASSPHRASE_VARIABLE))
-
     r = requests.put('https://127.0.0.1:9443/api/v3/onepanel/emergency_passphrase',
                      headers={'content-type': 'application/json'},
                      data=json.dumps({'newPassphrase': passphrase}),
@@ -162,7 +160,8 @@ def set_emergency_passphrase(passphrase):
                            .format(r.status_code, r.text))
 
 
-def do_request(passphrase, request, *args, **kwargs):
+def do_auth_request(request, *args, **kwargs):
+    passphrase = get_emergency_passphrase()
     r = request(*args, auth=(PASSPHRASE_USERNAME, passphrase), **kwargs)
     if r.status_code in (401, 403):
         raise AuthenticationError('Authentication error.\n'
@@ -200,11 +199,11 @@ def configure(config):
         # emergency passphrase setup failure indicates existing deployment
         return False
 
-    r = do_request(passphrase, requests.post,
-                   'https://127.0.0.1:9443/api/v3/onepanel/zone/configuration',
-                   headers={'content-type': 'application/x-yaml'},
-                   data=yaml.dump(config),
-                   verify=False)
+    r = do_auth_request(requests.post,
+                        'https://127.0.0.1:9443/api/v3/onepanel/zone/configuration',
+                        headers={'content-type': 'application/x-yaml'},
+                        data=yaml.dump(config),
+                        verify=False)
 
     if r.status_code == 409:
         return False
@@ -224,9 +223,9 @@ def configure(config):
 
     log('\nConfiguring onezone:')
     while status == 'running':
-        r = do_request(passphrase, requests.get,
-                       'https://127.0.0.1:9443' + loc,
-                       verify=False)
+        r = do_auth_request(requests.get,
+                            'https://127.0.0.1:9443' + loc,
+                            verify=False)
         if r.status_code != 200:
             raise RuntimeError('Unexpected configuration error\n{0}'
                                'For more information please check the logs.'.format(r.text))
@@ -271,7 +270,7 @@ def wait_for_workers():
 
 
 def nagios_up(url):
-    r = do_request(get_emergency_passphrase(), requests.get, url, verify=False)
+    r = do_auth_request(requests.get, url, verify=False)
     if r.status_code != requests.codes.ok:
         return False
 
@@ -408,9 +407,10 @@ if __name__ == '__main__':
                 if config_file_existed:
                     # most likely this is an existing deployment
                     log('Environment variable {} is missing.\n'
-                        'An existing deployment will continue to work; you can\n'
-                        'silence this message by setting the variable\n'
-                        'to the correct passphrase (formerly admin account\'s password).'
+                        'An existing deployment will continue to work\n'
+                        'but this script will not be able to track its startup.\n'
+                        'You can fix this by setting the variable\n'
+                        'to the Onepanel\' passphrase (formerly admin account\'s password).'
                         .format(EMERGENCY_PASSPHRASE_VARIABLE))
                 else:
                     log('Environment variable {} is missing.\n'
