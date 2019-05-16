@@ -10,8 +10,9 @@ import sys
 import time
 
 import textwrap
-import requests
 import yaml
+import requests
+from requests import codes
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 try:
@@ -151,11 +152,11 @@ def set_emergency_passphrase(passphrase):
                      headers={'content-type': 'application/json'},
                      data=json.dumps({'newPassphrase': passphrase}),
                      verify=False)
-    if r.status_code == 403:
+    if r.status_code == codes.forbidden:
         raise AuthenticationError('Could not set Onepanel emergency passphrase due to '
                                   'authentication error: {} {}'
                                   .format(r.status_code, r.text))
-    if r.status_code != 204:
+    if r.status_code != codes.no_content:
         raise RuntimeError('Could not set Onepanel emergency passphrase: {} {}'
                            .format(r.status_code, r.text))
 
@@ -163,7 +164,7 @@ def set_emergency_passphrase(passphrase):
 def do_auth_request(request, *args, **kwargs):
     passphrase = get_emergency_passphrase()
     r = request(*args, auth=(PASSPHRASE_USERNAME, passphrase), **kwargs)
-    if r.status_code in (401, 403):
+    if r.status_code in (codes.unauthorized, codes.forbidden):
         raise AuthenticationError('Authentication error.\n'
                                   'Please ensure that valid emergency passphrase is present\n'
                                   'in the {} environment variable'.format(EMERGENCY_PASSPHRASE_VARIABLE))
@@ -205,10 +206,10 @@ def configure(config):
                         data=yaml.dump(config),
                         verify=False)
 
-    if r.status_code == 409:
+    if r.status_code == codes.conflict:
         return False
 
-    if r.status_code != 201 and r.status_code != 204:
+    if r.status_code not in (codes.created, codes.no_content):
         raise RuntimeError(
             'Failed to start configuration process, the response was:\n'
             '  code: {0}\n'
@@ -226,7 +227,7 @@ def configure(config):
         r = do_auth_request(requests.get,
                             'https://127.0.0.1:9443' + loc,
                             verify=False)
-        if r.status_code != 200:
+        if r.status_code != codes.ok:
             raise RuntimeError('Unexpected configuration error\n{0}'
                                'For more information please check the logs.'.format(r.text))
         else:
@@ -271,7 +272,7 @@ def wait_for_workers():
 
 def nagios_up(url):
     r = do_auth_request(requests.get, url, verify=False)
-    if r.status_code != requests.codes.ok:
+    if r.status_code != codes.ok:
         return False
 
     healthdata = eTree.fromstring(r.text)
