@@ -4,7 +4,6 @@
 import json
 import os
 import re
-import shutil
 import subprocess as sp
 import sys
 import time
@@ -21,6 +20,7 @@ except ImportError:
     import xml.etree.ElementTree as eTree
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 
 LOGS = [('[oz_panel]', '/var/log/oz_panel'),
         ('[cluster_manager]', '/var/log/cluster_manager'),
@@ -103,6 +103,7 @@ def generate_config_file(file_path):
     with open(file_path, 'w') as f:
         f.write(content)
 
+
 def start_onepanel():
     log('Starting oz_panel...')
     with open(os.devnull, 'w') as null:
@@ -139,8 +140,8 @@ def format_step(step):
     return '* {0}: {1}'.format(service, action)
 
 
-# Returns emergency passphrase provided in environment variable
 def get_emergency_passphrase():
+    """Returns emergency passphrase provided in environment variable"""
     passphrase = os.environ.get(EMERGENCY_PASSPHRASE_VARIABLE)
     if passphrase is None:
         raise MissingVariableError(EMERGENCY_PASSPHRASE_VARIABLE)
@@ -167,7 +168,8 @@ def do_auth_request(request, *args, **kwargs):
     if r.status_code in (codes.unauthorized, codes.forbidden):
         raise AuthenticationError('Authentication error.\n'
                                   'Please ensure that valid emergency passphrase is present\n'
-                                  'in the {} environment variable'.format(EMERGENCY_PASSPHRASE_VARIABLE))
+                                  'in the {} environment variable'
+                                  .format(EMERGENCY_PASSPHRASE_VARIABLE))
     return r
 
 
@@ -188,7 +190,7 @@ def get_batch_config():
 
 def configure(config):
     """
-    Attempts to deploy the Onezone service
+    Attempts to deploy the Onezone
     :return: False if configuration was skipped because of existing deployment,
         True upon success
     """
@@ -214,22 +216,23 @@ def configure(config):
             'Failed to start configuration process, the response was:\n'
             '  code: {0}\n'
             '  body: {1}\n'
-            'For more information please check the logs.'.format(r.status_code,
-                                                                 r.text))
+            'For more information please check the logs.'
+            .format(r.status_code, r.text))
 
     loc = r.headers['location']
     status = 'running'
     steps = []
     resp = {}
 
-    log('\nConfiguring onezone:')
+    log('\nConfiguring Onezone:')
     while status == 'running':
         r = do_auth_request(requests.get,
                             'https://127.0.0.1:9443' + loc,
                             verify=False)
         if r.status_code != codes.ok:
             raise RuntimeError('Unexpected configuration error\n{0}'
-                               'For more information please check the logs.'.format(r.text))
+                               'For more information please check the logs.'
+                               .format(r.text))
         else:
             resp = json.loads(r.text)
             status = resp.get('status', 'error')
@@ -244,12 +247,13 @@ def configure(config):
     if status != 'ok':
         raise RuntimeError('Error: {error}\nDescription: {description}\n'
                            'Module: {module}\nFunction: {function}\nDetails by host: {hosts}\n'
-                           'For more information please check the logs.'.format(
-            error=resp.get('error', 'unknown'),
-            description=resp.get('description', '-'),
-            module=resp.get('module', '-'),
-            function=resp.get('function', '-'),
-            hosts=format_error_hosts(resp.get('hosts', {}))))
+                           'For more information please check the logs.'
+                            .format(
+                            error=resp.get('error', 'unknown'),
+                            description=resp.get('description', '-'),
+                            module=resp.get('module', '-'),
+                            function=resp.get('function', '-'),
+                            hosts=format_error_hosts(resp.get('hosts', {}))))
     return True
 
 
@@ -286,9 +290,11 @@ def get_container_id():
 
 def inspect_container(container_id):
     try:
-        result = sp.check_output(['curl', '-s', '--unix-socket',
-                                  '/var/run/docker.sock', 'http:/containers/{0}/json'.
-                                  format(container_id)])
+        result = sp.check_output([
+            'curl', '-s', '--unix-socket',
+            '/var/run/docker.sock',
+            'http:/containers/{0}/json'.format(container_id)
+        ])
         return json.loads(result)
     except Exception:
         return {}
@@ -311,8 +317,9 @@ def show_ports(json):
         host = ports[container_port]
         if host:
             for host_port in host:
-                ports_format.append('{0}:{1} -> {2}'.format(host_port['HostIp'],
-                                                            host_port['HostPort'], container_port))
+                ports_format.append('{0}:{1} -> {2}'.format(
+                    host_port['HostIp'], host_port['HostPort'], container_port
+                ))
         else:
             ports_format.append(container_port)
     ports_str = '\n         '.join(ports_format) if ports_format else '-'
@@ -384,7 +391,6 @@ if __name__ == '__main__':
             generate_config_file(app_config_path)
 
         set_node_name(vm_args_path)
-
         start_onepanel()
 
         batch_mode = os.environ.get('ONEPANEL_BATCH_MODE', 'false')
@@ -392,11 +398,11 @@ if __name__ == '__main__':
             batch_config = get_batch_config()
             try:
                 if configure(batch_config):
-                    log('\nCongratulations! New onezone deployment successfully started.')
+                    log('\nCongratulations! New Onezone deployment successfully started.')
                 else:
                     log("\nWaiting for existing cluster to start...")
                     wait_for_workers()
-                    log('Existing onezone deployment resumed work.')
+                    log('Existing Onezone deployment resumed work.')
             except AuthenticationError as e:
                 log('The launch script cannot access onepanel to manage the deployment process.\n'
                     'Please ensure that valid emergency passphrase is present\n'
