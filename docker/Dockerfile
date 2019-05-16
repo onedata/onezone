@@ -4,6 +4,7 @@ MAINTAINER Krzysztof Trzepla <krzysztof.trzepla@gmail.com>
 
 # Build arguments
 ARG RELEASE
+ARG RELEASE_TYPE
 ARG OZ_PANEL_VERSION
 ARG COUCHBASE_VERSION
 ARG CLUSTER_MANAGER_VERSION
@@ -16,11 +17,6 @@ RUN groupadd -g 150 onedata && \
     useradd -u 151 -g 150 -d /var/lib/oz_panel oz_panel && \
     useradd -u 152 -g 150 -d /var/lib/cluster_manager cluster_manager && \
     useradd -u 153 -g 150 -d /var/lib/oz_worker oz_worker
-
-# onedata deps ppa
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C211375C && \
-    echo "deb http://ppa.launchpad.net/onedata/ceph/ubuntu xenial main" > /etc/apt/sources.list.d/onedata-ppa.list && \
-    echo "deb http://ppa.launchpad.net/onedata/build-deps-openssl11/ubuntu xenial main" >> /etc/apt/sources.list.d/onedata-ppa.list
 
 # Get the image up to date and install utility tools
 RUN apt-get -y update && \
@@ -39,20 +35,20 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 # Install onezone package
-RUN case ${RELEASE} in \
+RUN case ${RELEASE_TYPE} in \
         production) \
-            curl -O http://get.onedata.org/onezone.sh; \
+            curl -O http://get.onedata.org/onezone-${RELEASE}.sh; \
             ;; \
         *) \
-            curl -O http://onedata-dev-packages.cloud.plgrid.pl/onezone.sh; \
+            curl -O http://onedata-dev-packages.cloud.plgrid.pl/onezone-${RELEASE}.sh; \
             ;; \
     esac && \
-    sh onezone.sh oz-panel=${OZ_PANEL_VERSION}-1 && \
-    sh onezone.sh couchbase-server-community=${COUCHBASE_VERSION}-1 && \
-    sh onezone.sh cluster-manager=${CLUSTER_MANAGER_VERSION}-1 && \
-    sh onezone.sh oz-worker=${OZ_WORKER_VERSION}-1 && \
-    sh onezone.sh onezone=${ONEZONE_VERSION}-1 && \
-    rm -f onezone.sh
+    sh onezone-${RELEASE}.sh oz-panel=${OZ_PANEL_VERSION}-1 && \
+    sh onezone-${RELEASE}.sh couchbase-server-community=${COUCHBASE_VERSION}-1 && \
+    sh onezone-${RELEASE}.sh cluster-manager=${CLUSTER_MANAGER_VERSION}-1 && \
+    sh onezone-${RELEASE}.sh oz-worker=${OZ_WORKER_VERSION}-1 && \
+    sh onezone-${RELEASE}.sh onezone=${ONEZONE_VERSION}-1 && \
+    rm -f onezone-${RELEASE}.sh
 
 # Backup files from persistence, as the persistent volume will be overwritten
 # by mounting it from host. The missing files will be copied back in entrypoint.

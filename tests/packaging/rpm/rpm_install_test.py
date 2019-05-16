@@ -54,7 +54,7 @@ def onezone(request, setup_command):
 
     return distribution
 
-
+@pytest.mark.skip(reason="Fix SCL paths")
 def test_onezone_installation(onezone):
     assert 0 == docker.exec_(onezone.container,
                              interactive=True,
