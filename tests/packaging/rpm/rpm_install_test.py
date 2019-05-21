@@ -55,6 +55,7 @@ def onezone(request, setup_command):
     return distribution
 
 
+@pytest.mark.skip(reason="Changes in external repo caused install failure")
 def test_onezone_installation(onezone):
     assert 0 == docker.exec_(onezone.container,
                              interactive=True,
