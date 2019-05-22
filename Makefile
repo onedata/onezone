@@ -1,11 +1,12 @@
 # distro for package building (oneof: xenial, fedora-23-x86_64)
+RELEASE                 ?= $(shell cat ./RELEASE)
 DISTRIBUTION            ?= none
 DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
 DOCKER_BASE_IMAGE       ?= "ubuntu:16.04"
-DOCKER_DEV_BASE_IMAGE   ?= "onedata/worker:v57"
+DOCKER_DEV_BASE_IMAGE   ?= "onedata/worker:1802-1"
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always)
@@ -40,17 +41,19 @@ all: build
 
 make = $(1)/make.py -s $(1) -r .
 clean = $(call make, $(1)) clean
-make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION) $(2)
+make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
 mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 	mv $(1)/package/packages/*.x86_64.rpm package/$(DISTRIBUTION)/x86_64
-make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-VFS-4267 $(2)
-mv_deb = mv $(1)/package/packages/*.orig.tar.gz package/$(DISTRIBUTION)/source && \
-	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source && \
-	mv $(1)/package/packages/*.diff.gz package/$(DISTRIBUTION)/source || \
-	mv $(1)/package/packages/*.debian.tar.xz package/$(DISTRIBUTION)/source && \
-	mv $(1)/package/packages/*_amd64.changes package/$(DISTRIBUTION)/source && \
-	mv $(1)/package/packages/*_amd64.deb package/$(DISTRIBUTION)/binary-amd64
+make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
+mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
+	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
+	mv $(1)/package/packages/*.debian.tar.xz package/$(DISTRIBUTION)/source | true && \
+	mv $(1)/package/packages/*_amd64.changes package/$(DISTRIBUTION)/sourcea | true && \
+    mv $(1)/package/packages/*_amd64.deb package/$(DISTRIBUTION)/binary-amd64
 unpack = tar xzf $(1).tar.gz
+
+get_release:
+	@echo $(RELEASE)
 
 ##
 ## Submodules
@@ -127,6 +130,7 @@ clean_packages:
 
 rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	cp -f onezone_meta/onezone.spec.template onezone_meta/onezone.spec
+	sed -i 's/{{scl}}/onedata$(RELEASE)/g' onezone_meta/onezone.spec
 	sed -i 's/{{onezone_version}}/$(ONEZONE_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{onezone_build}}/$(ONEZONE_BUILD)/g' onezone_meta/onezone.spec
 	sed -i 's/{{couchbase_version}}/$(COUCHBASE_VERSION)/g' onezone_meta/onezone.spec
@@ -134,13 +138,15 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
 
-	bamboos/docker/make.py -i onedata/rpm_builder --privileged --group mock -c \
-	        mock --buildsrpm --spec onezone_meta/onezone.spec \
+	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
+		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
+		    --privileged --group mock -c mock --buildsrpm --spec onezone_meta/onezone.spec \
 	        --sources onezone_meta --root $(DISTRIBUTION) \
 	        --resultdir onezone_meta/package/packages
 
-	bamboos/docker/make.py -i onedata/rpm_builder --privileged --group mock -c \
-	        mock --rebuild onezone_meta/package/packages/*.src.rpm \
+	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
+		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
+		    --privileged --group mock -c mock --rebuild onezone_meta/package/packages/*.src.rpm \
 	        --root $(DISTRIBUTION) --resultdir onezone_meta/package/packages
 
 	$(call mv_rpm, onezone_meta)
@@ -206,7 +212,8 @@ docker: docker-dev
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
                       --password $(DOCKER_REG_PASSWORD) \
                       --build-arg BASE_IMAGE=$(DOCKER_BASE_IMAGE) \
-                      --build-arg RELEASE=$(DOCKER_RELEASE) \
+                      --build-arg RELEASE=$(RELEASE) \
+                      --build-arg RELEASE_TYPE=$(DOCKER_RELEASE) \
                       --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
                       --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
                       --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
@@ -218,6 +225,7 @@ docker: docker-dev
 docker-dev:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
                       --password $(DOCKER_REG_PASSWORD) \
+                      --build-arg RELEASE=$(RELEASE) \
                       --build-arg BASE_IMAGE=$(DOCKER_DEV_BASE_IMAGE) \
                       --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
                       --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
