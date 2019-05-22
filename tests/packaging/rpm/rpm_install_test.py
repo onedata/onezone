@@ -36,9 +36,11 @@ class Distribution(object):
 def setup_command():
     return 'yum -y update && ' \
         'yum -y install epel-release && ' \
-        'yum -y install ca-certificates python wget python-setuptools && ' \
-        'easy_install requests && ' \
-        'wget -qO- "{url}/yum/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
+        'yum -y install ca-certificates python wget curl && ' \
+        'yum -y install python-setuptools python-pip && ' \
+        'pip install --upgrade pip && ' \
+        'pip install requests && ' \
+        'curl -sSL "{url}/yum/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
         .format(url='http://packages.onedata.org')
 
 
