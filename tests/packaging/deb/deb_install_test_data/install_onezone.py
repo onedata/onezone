@@ -7,6 +7,8 @@ from subprocess import STDOUT, check_call, check_output
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+release = sys.argv[1]
+
 # get packages
 packages = check_output(['ls', '/root/pkg']).split()
 packages = sorted(packages, reverse=True)
@@ -19,8 +21,9 @@ oz_worker_package = \
 onezone_package = [path for path in packages if path.startswith('onezone')][0]
 
 # get couchbase
-check_call(['wget', 'http://packages.couchbase.com/releases/4.5.1/couchbase'
-                    '-server-community_4.5.1-ubuntu14.04_amd64.deb'])
+check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/xenial/pool/' \
+                    'main/c/couchbase-server-community/couchbase-' \
+                    'server-community_4.5.1-ubuntu14.04_amd64.deb'])
 
 # install packages
 check_call(['sh', '-c',

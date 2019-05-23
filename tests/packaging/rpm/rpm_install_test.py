@@ -1,9 +1,12 @@
+import os
 import pytest
 from tests.test_common import *
 from environment import docker, env
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
+with open('./RELEASE', 'r') as f:
+    release = f.read().replace('\n', '')
 
 class Distribution(object):
 
@@ -40,8 +43,8 @@ def setup_command():
         'yum -y install python-setuptools python-pip && ' \
         'pip install --upgrade pip && ' \
         'pip install requests && ' \
-        'curl -sSL "{url}/yum/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
-        .format(url='http://packages.onedata.org')
+        'curl -sSL "{url}/yum/{release}/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
+        .format(url='http://packages.onedata.org', release=release)
 
 
 @pytest.fixture(scope='module',
@@ -56,9 +59,9 @@ def onezone(request, setup_command):
 
     return distribution
 
-@pytest.mark.skip(reason="Fix SCL paths")
 def test_onezone_installation(onezone):
     assert 0 == docker.exec_(onezone.container,
                              interactive=True,
                              tty=True,
-                             command='python /root/data/install_onezone.py')
+                             command='python /root/data/install_onezone.py ' \
+                                     '{}'.format(release,))
