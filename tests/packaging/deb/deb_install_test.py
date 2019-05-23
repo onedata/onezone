@@ -4,6 +4,8 @@ from environment import docker, env
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
+with open('./RELEASE', 'r') as f:
+    release = f.read().replace('\n', '')
 
 class Distribution(object):
 
@@ -37,8 +39,8 @@ def setup_command():
         'apt-get install -y ca-certificates locales python wget python-setuptools && ' \
         'easy_install requests && ' \
         'wget -qO- {url}/onedata.gpg.key | apt-key add - && ' \
-        'echo "deb {url}/apt/ubuntu/{{dist}} {{dist}} main" > /etc/apt/sources.list.d/onedata.list && ' \
-        'echo "deb-src {url}/apt/ubuntu/{{dist}} {{dist}} main" >> /etc/apt/sources.list.d/onedata.list && ' \
+        'echo "deb {url}/apt/ubuntu/{{release}} {{dist}} main" > /etc/apt/sources.list.d/onedata.list && ' \
+        'echo "deb-src {url}/apt/ubuntu/{{release}} {{dist}} main" >> /etc/apt/sources.list.d/onedata.list && ' \
         'apt-get update && ' \
         'locale-gen en_US.UTF-8'.format(url='http://packages.onedata.org')
 
@@ -47,7 +49,8 @@ def setup_command():
                 params=['xenial'])
 def onezone(request, setup_command):
     distribution = Distribution(request)
-    command = setup_command.format(dist=distribution.name)
+    command = setup_command.format(dist=distribution.name,
+                                   release=release)
 
     assert 0 == docker.exec_(distribution.container,
                              interactive=True,
@@ -60,4 +63,5 @@ def test_onezone_installation(onezone):
     assert 0 == docker.exec_(onezone.container,
                              interactive=True,
                              tty=True,
-                             command='python /root/data/install_onezone.py')
+                             command='python /root/data/install_onezone.py ' \
+                                     '{}'.format(release,))
