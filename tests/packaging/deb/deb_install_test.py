@@ -18,7 +18,7 @@ class Distribution(object):
                                     tty=True,
                                     detach=True,
                                     image=self.image,
-                                    hostname='onezone.dev.local',
+                                    hostname='onezone.test.local',
                                     stdin=sys.stdin,
                                     stdout=sys.stdout,
                                     stderr=sys.stderr,
@@ -55,7 +55,6 @@ def onezone(request, setup_command):
                              command=command)
 
     return distribution
-
 
 def test_onezone_installation(onezone):
     assert 0 == docker.exec_(onezone.container,
