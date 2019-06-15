@@ -4,6 +4,13 @@
 CHANGELOG
 ---------
 
+### 18.02.2
+
+* Update submodules
+* VFS-5436 Fixed Xenial package tests
+* VFS-5434 Fixed CentOS package tests
+
+
 ### 18.02.1
 
 * VFS-5154 Updated Onezone package test deployment configs
