@@ -17,11 +17,11 @@ onezone:
   domainName: "onezone.test.local"
   policies:
     subdomainDelegation: false
-onepanel:
+    guiPackageVerification: false
   users:
-    "admin":
-      password: "password"
-      userRole: "admin"
-    "user1":
-      password: "Password2"
-      userRole: "regular"
+    - username: ozadmin
+      password: password
+      groups: ["admins"]
+    - username: user1
+      password: password2
+      groups: []
