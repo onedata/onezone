@@ -36,8 +36,8 @@ class Distribution(object):
 @pytest.fixture(scope='module')
 def setup_command():
     return 'apt-get update && ' \
-        'apt-get install -y ca-certificates locales python wget python-setuptools && ' \
-        'easy_install requests && ' \
+        'apt-get install -y ca-certificates locales python wget python-pip gnupg2 libssl1.0.0 && ' \
+        'pip install requests && ' \
         'wget -qO- {url}/onedata.gpg.key | apt-key add - && ' \
         'echo "deb {url}/apt/ubuntu/{{release}} {{dist}} main" > /etc/apt/sources.list.d/onedata.list && ' \
         'echo "deb-src {url}/apt/ubuntu/{{release}} {{dist}} main" >> /etc/apt/sources.list.d/onedata.list && ' \
@@ -46,7 +46,7 @@ def setup_command():
 
 
 @pytest.fixture(scope='module',
-                params=['xenial'])
+                params=['xenial', 'bionic'])
 def onezone(request, setup_command):
     distribution = Distribution(request)
     command = setup_command.format(dist=distribution.name,
@@ -64,4 +64,4 @@ def test_onezone_installation(onezone):
                              interactive=True,
                              tty=True,
                              command='python /root/data/install_onezone.py ' \
-                                     '{}'.format(release,))
+                                     '{}'.format(onezone.name,))
