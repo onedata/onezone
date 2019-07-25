@@ -2,7 +2,7 @@ Package: onezone
 Version: {{onezone_version}}-{{onezone_build}}~{{distribution}}
 Section: net
 Priority: extra
-Architecture: all
+Architecture: amd64
 Depends: cluster-manager (= {{cluster_manager_version}}-1~{{distribution}}),
     oz-worker (= {{oz_worker_version}}-1~{{distribution}}),
     oz-panel (= {{oz_panel_version}}-1~{{distribution}}),
