@@ -1,5 +1,5 @@
 Package: onezone
-Version: {{onezone_version}}-{{onezone_build}}
+Version: {{onezone_version}}-{{onezone_build}}~{{distribution}}
 Section: net
 Priority: extra
 Architecture: all
