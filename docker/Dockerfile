@@ -5,6 +5,7 @@ MAINTAINER Krzysztof Trzepla <krzysztof.trzepla@gmail.com>
 # Build arguments
 ARG RELEASE
 ARG RELEASE_TYPE
+ARG DISTRIBUTION=xenial
 ARG OZ_PANEL_VERSION
 ARG COUCHBASE_VERSION
 ARG CLUSTER_MANAGER_VERSION
@@ -43,11 +44,11 @@ RUN case ${RELEASE_TYPE} in \
             curl -O http://onedata-dev-packages.cloud.plgrid.pl/onezone-${RELEASE}.sh; \
             ;; \
     esac && \
-    sh onezone-${RELEASE}.sh oz-panel=${OZ_PANEL_VERSION}-1 && \
+    sh onezone-${RELEASE}.sh oz-panel=${OZ_PANEL_VERSION}-1~${DISTRIBUTION} && \
     sh onezone-${RELEASE}.sh couchbase-server-community=${COUCHBASE_VERSION}-1 && \
-    sh onezone-${RELEASE}.sh cluster-manager=${CLUSTER_MANAGER_VERSION}-1 && \
-    sh onezone-${RELEASE}.sh oz-worker=${OZ_WORKER_VERSION}-1 && \
-    sh onezone-${RELEASE}.sh onezone=${ONEZONE_VERSION}-1 && \
+    sh onezone-${RELEASE}.sh cluster-manager=${CLUSTER_MANAGER_VERSION}-1~${DISTRIBUTION} && \
+    sh onezone-${RELEASE}.sh oz-worker=${OZ_WORKER_VERSION}-1~${DISTRIBUTION} && \
+    sh onezone-${RELEASE}.sh onezone=${ONEZONE_VERSION}-1~${DISTRIBUTION} && \
     rm -f onezone-${RELEASE}.sh
 
 # Backup files from persistence, as the persistent volume will be overwritten

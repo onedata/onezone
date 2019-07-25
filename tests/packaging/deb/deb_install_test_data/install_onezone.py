@@ -7,7 +7,7 @@ from subprocess import STDOUT, check_call, check_output
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-release = sys.argv[1]
+dist = sys.argv[1]
 
 EMERGENCY_USERNAME = 'onepanel'
 EMERGENCY_PASSPHRASE = 'passphrase'
@@ -16,12 +16,16 @@ EMERGENCY_PASSPHRASE = 'passphrase'
 packages = check_output(['ls', '/root/pkg']).split()
 packages = sorted(packages, reverse=True)
 oz_panel_package = \
-    [path for path in packages if path.startswith('oz-panel')][0]
+    [path for path in packages if path.startswith('oz-panel')
+                                  and (dist in path)][0]
 cluster_manager_package = \
-    [path for path in packages if path.startswith('cluster-manager')][0]
+    [path for path in packages if path.startswith('cluster-manager')
+                                  and (dist in path)][0]
 oz_worker_package = \
-    [path for path in packages if path.startswith('oz-worker')][0]
-onezone_package = [path for path in packages if path.startswith('onezone')][0]
+    [path for path in packages if path.startswith('oz-worker')
+                                  and (dist in path)][0]
+onezone_package = [path for path in packages if path.startswith('onezone')
+                                                and (dist in path)][0]
 
 # get couchbase
 check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/xenial/pool/' \
@@ -31,19 +35,15 @@ check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/xenial/pool/' \
 # install packages
 check_call(['sh', '-c',
             'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb '
-            '; apt-get -f -y install'
-            ], stderr=STDOUT)
-check_call(['sh', '-c', 'dpkg -i /root/pkg/{package} ; apt-get -f -y '
-                        'install'.format(package=oz_panel_package)
-            ], stderr=STDOUT)
-check_call(['sh', '-c', 'dpkg -i /root/pkg/{package} ; apt-get -f -y '
-                        'install'.format(package=cluster_manager_package)
-            ], stderr=STDOUT)
-check_call(['sh', '-c', 'dpkg -i /root/pkg/{package} ; apt-get -f -y '
-                        'install'.format(package=oz_worker_package)
-            ], stderr=STDOUT)
-check_call(['dpkg', '-i', '/root/pkg/{package}'.
-            format(package=onezone_package)], stderr=STDOUT)
+            '; apt-get -f -y install'], stderr=STDOUT)
+check_call(['sh', '-c', 'apt install -y /root/pkg/{package}'
+                        .format(package=oz_panel_package)], stderr=STDOUT)
+check_call(['sh', '-c', 'apt install -y /root/pkg/{package}'
+                .format(package=cluster_manager_package)], stderr=STDOUT)
+check_call(['sh', '-c', 'apt install -y /root/pkg/{package}'
+                        .format(package=oz_worker_package)], stderr=STDOUT)
+check_call(['sh', '-c', ' apt install -y /root/pkg/{package}'
+                        .format(package=onezone_package)], stderr=STDOUT)
 
 # validate packages installation
 check_call(['service', 'oz_panel', 'status'])

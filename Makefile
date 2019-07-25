@@ -47,9 +47,8 @@ mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
 mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
-	mv $(1)/package/packages/*.debian.tar.xz package/$(DISTRIBUTION)/source | true && \
-	mv $(1)/package/packages/*_amd64.changes package/$(DISTRIBUTION)/sourcea | true && \
-    mv $(1)/package/packages/*_amd64.deb package/$(DISTRIBUTION)/binary-amd64
+	mv $(1)/package/packages/*_source.changes package/$(DISTRIBUTION)/source | true && \
+	mv $(1)/package/packages/*_amd64.deb package/$(DISTRIBUTION)/binary-amd64
 unpack = tar xzf $(1).tar.gz
 
 get_release:
@@ -178,9 +177,11 @@ deb: deb_onepanel deb_oz_worker deb_cluster_manager
 	sed -i 's/{{cluster_manager_version}}/$(CLUSTER_MANAGER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone/DEBIAN/control
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone/DEBIAN/control
+	sed -i 's/{{distribution}}/$(DISTRIBUTION)/g' onezone_meta/onezone/DEBIAN/control
 
 	bamboos/docker/make.py -s onezone_meta -r . -c 'dpkg-deb -b onezone'
-	mv onezone_meta/onezone.deb package/$(DISTRIBUTION)/binary-amd64/onezone_$(ONEZONE_VERSION)-$(ONEZONE_BUILD)_amd64.deb
+	mv onezone_meta/onezone.deb \
+           package/$(DISTRIBUTION)/binary-amd64/onezone_$(ONEZONE_VERSION)-$(ONEZONE_BUILD)~$(DISTRIBUTION)_amd64.deb
 
 deb_onepanel: clean_onepanel debdirs
 	$(call make_deb, onepanel, package) -e PKG_VERSION=$(OZ_PANEL_VERSION) -e REL_TYPE=onezone
@@ -191,7 +192,8 @@ deb_oz_worker: clean_oz_worker debdirs
 	$(call mv_deb, oz_worker)
 
 deb_cluster_manager: clean_cluster_manager debdirs
-	$(call make_deb, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION)
+	$(call make_deb, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION) \
+		-e DISTRIBUTION=$(DISTRIBUTION)
 	$(call mv_deb, cluster_manager)
 
 debdirs:
