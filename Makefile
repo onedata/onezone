@@ -9,19 +9,19 @@ DOCKER_BASE_IMAGE       ?= "ubuntu:18.04"
 DOCKER_DEV_BASE_IMAGE   ?= "onedata/worker:1902-1"
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
-ONEZONE_VERSION         := $(shell git describe --tags --always)
+ONEZONE_VERSION         := $(shell git describe --tags --always --abbrev=7)
 endif
 ifeq ($(strip $(COUCHBASE_VERSION)),)
 COUCHBASE_VERSION       := 4.5.1-2844
 endif
 ifeq ($(strip $(CLUSTER_MANAGER_VERSION)),)
-CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always)
+CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always --abbrev=7)
 endif
 ifeq ($(strip $(OZ_WORKER_VERSION)),)
-OZ_WORKER_VERSION       := $(shell git -C oz_worker describe --tags --always)
+OZ_WORKER_VERSION       := $(shell git -C oz_worker describe --tags --always --abbrev=7)
 endif
 ifeq ($(strip $(OZ_PANEL_VERSION)),)
-OZ_PANEL_VERSION        := $(shell git -C onepanel describe --tags --always)
+OZ_PANEL_VERSION        := $(shell git -C onepanel describe --tags --always --abbrev=7)
 endif
 
 ONEZONE_VERSION         := $(shell echo ${ONEZONE_VERSION} | tr - .)
