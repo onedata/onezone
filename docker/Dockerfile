@@ -23,7 +23,7 @@ RUN groupadd -g 150 onedata && \
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y install ca-certificates curl locales net-tools \
-                       python python-pip python-yaml \
+                       python python-pip python-yaml libssl1.0.0 \
                        iproute2 dnsutils iperf3 traceroute vim && \
     apt-get clean
 
