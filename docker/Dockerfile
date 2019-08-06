@@ -65,4 +65,7 @@ EXPOSE 53 53/udp 80 443 9443
 ADD onezone.sh /root/onezone.sh
 ADD onezone.py /root/onezone.py
 
+# Disable RANDFILE in OpenSSL
+RUN sed -i 's/^RANDFILE.*\.rnd/#&/' /etc/ssl/openssl.cnf
+
 CMD ["/root/onezone.sh"]
