@@ -4,6 +4,22 @@
 CHANGELOG
 ---------
 
+### 19.02.0-rc1
+
+* VFS-5660 Disabled RANDFILE to enable certificate creation in Docker
+* VFS-5660 Added libssl1.0.0 dependency to Docker
+* VFS-5660 Fixed git has abrrev length
+* VFS-5660 Updated onezone dockerfile for Ubuntu Bionic
+* VFS-5657 Changed onezone package architecture for Ubuntu
+* VFS-5657 Fixed Dockerfile for tagged ubuntu packages
+* VFS-5657 Updated make_deb Makefile rules for bionic
+
+
+### 18.02.3
+
+* Releasing new version 18.02.3
+
+
 ### 18.02.2
 
 * Update submodules
