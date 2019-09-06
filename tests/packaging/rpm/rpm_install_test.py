@@ -37,7 +37,8 @@ class Distribution(object):
 
 @pytest.fixture(scope='module')
 def setup_command():
-    return 'yum -y update && ' \
+    return 'echo "proxy=http://proxy.devel.onedata.org:3128" >> /etc/yum.conf && ' \
+        'yum -y update && ' \
         'yum -y install epel-release && ' \
         'yum -y install ca-certificates python wget curl && ' \
         'yum -y install python-setuptools python-pip && ' \
