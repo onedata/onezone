@@ -12,6 +12,10 @@ ARG CLUSTER_MANAGER_VERSION
 ARG OZ_WORKER_VERSION
 ARG ONEZONE_VERSION
 ARG ONEPANEL_AUTOSTART=false
+ARG HTTP_PROXY
+
+# Enable Onedata devel package proxy cache
+ENV http_proxy ${HTTP_PROXY}
 
 # Add users and groups
 RUN groupadd -g 150 onedata && \
