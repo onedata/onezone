@@ -72,4 +72,7 @@ ADD onezone.py /root/onezone.py
 # Disable RANDFILE in OpenSSL
 RUN sed -i 's/^RANDFILE.*\.rnd/#&/' /etc/ssl/openssl.cnf
 
+# Disable http_proxy for normal operation
+ENV http_proxy ""
+
 CMD ["/root/onezone.sh"]
