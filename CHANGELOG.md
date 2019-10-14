@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 19.02.0-rc2
+
+* Releasing new version 19.02.0-rc2
+
+
 ### 19.02.0-rc1
 
 * VFS-5660 Disabled RANDFILE to enable certificate creation in Docker
