@@ -54,6 +54,12 @@ unpack = tar xzf $(1).tar.gz
 get_release:
 	@echo $(RELEASE)
 
+print_package_versions:
+	@echo "onezone:\t\t" $(ONEZONE_VERSION)
+	@echo "cluster-manager:\t" $(CLUSTER_MANAGER_VERSION)
+	@echo "oz-worker:\t\t" $(OZ_WORKER_VERSION)
+	@echo "oz-panel:\t\t" $(OZ_PANEL_VERSION)
+
 ##
 ## Submodules
 ##
