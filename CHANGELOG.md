@@ -4,6 +4,27 @@
 CHANGELOG
 ---------
 
+### 19.02.1
+
+* VFS-5884 Added print_package_versions makefile rule
+
+##### oz-worker
+
+* VFS-5936 Improve entitlement mapping * Merge entitlements with different roles (privileges) to the highest of them * Store previous privileges to discover and coalesce later changes in user roles
+* VFS-5940 Rename GUI package verification envs to more intuitive
+* VFS-5205 Hide share CREATE and DELETE operations from Onezone REST API (as they are reserved for Oneprovider logic), return rootFileId as ObjectID in share details
+
+##### onepanel
+
+* VFS-5994 Make 'production' Let's Encrypt mode the default
+* VFS-5940 Rename oz-worker's GUI package verification envs to more intuitive
+
+
+### 19.02.0-rc2
+
+* Releasing new version 19.02.0-rc2
+
+
 ### 19.02.0-rc1
 
 * VFS-5660 Disabled RANDFILE to enable certificate creation in Docker
