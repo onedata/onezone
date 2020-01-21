@@ -41,7 +41,7 @@ RUN case ${RELEASE_TYPE} in \
             curl -O http://get.onedata.org/onezone-${RELEASE}.sh; \
             ;; \
         *) \
-            curl -O http://onedata-dev-packages.cloud.plgrid.pl/onezone-${RELEASE}.sh; \
+            curl -O http://packages.devel.onedata.org/onezone-${RELEASE}.sh; \
             ;; \
     esac && \
     sh onezone-${RELEASE}.sh oz-panel=${OZ_PANEL_VERSION}-1~${DISTRIBUTION} && \
