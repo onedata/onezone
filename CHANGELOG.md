@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 19.02.2
+
+* Bugfixes and stability improvements
+
+
 ### 19.02.1
 
 * VFS-5884 Added print_package_versions makefile rule
