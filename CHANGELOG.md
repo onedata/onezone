@@ -4,6 +4,19 @@
 CHANGELOG
 ---------
 
+### 20.02.0-beta3
+
+* VFS_6131 Account for changes in emergency passphrase api changes
+* VFS-5838 entrypoint: Accept any 2xx and 3xx HTTP codes as success
+* VFS-5841 entrypoint: Use PyYAML's safe loader to silence a warning
+* VFS-5841 Parse deployment error using new onepanel errors format
+* VFS-5742 Disabled http_proxy for normal operation
+* VFS-5742 Disabled yum mirrors for package tests
+* VFS-5742 Disabled yum proxy for package tests
+* VFS-5742 Enabled proxy cache for package tests
+* VFS-5742 Enabled proxy cache for docker builds
+
+
 ### 19.02.1
 
 * VFS-5884 Added print_package_versions makefile rule
