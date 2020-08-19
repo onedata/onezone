@@ -60,6 +60,8 @@ CHANGELOG
     not have access to APIs that could alter or delete user data and
     memberships.
 
+### 20.02.0-beta4
+
 ### 20.02.0-beta3
 
 -   VFS\_6131 Account for changes in emergency passphrase api changes
