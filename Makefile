@@ -48,6 +48,7 @@ mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
 mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
+	mv $(1)/package/packages/*.diff.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*_source.changes package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*_amd64.deb package/$(DISTRIBUTION)/binary-amd64
 unpack = tar xzf $(1).tar.gz
