@@ -7,8 +7,6 @@ CHANGELOG
 ### 20.02.1
 
 -   **VFS-6645** Optimize changes querrying.
--   **VFS-6631** Rtransfer takes into account storage block size
-    choosing blocks to synchronize.
 -   **VFS-6628** Extended harvesting configuration - it is now possible
     to select harvesting options, like metadata types to harvest or
     additional file details (fileName, spaceId), upon index creation.
@@ -19,7 +17,6 @@ CHANGELOG
     allowing for all payloads rejected by the harvesting backend to be
     automatically analysed for offending data (e.g. fields that do not
     match the schema), pruned and submitted again.
--   **VFS-6607** Fix node restart with HA disabled.
 -   **VFS-6568** Introduced concept of readonly storage. If enabled,
     Oneprovider will block any operation that writes, modifies or
     deletes data on the storage. Such storage can only be used to import
@@ -42,27 +39,11 @@ CHANGELOG
 -   **VFS-6453** New Open Data and share description views with visual
     Dublin Core editor and Markdown editor.
 -   **VFS-6421** New generic GUI plugin for harvesters.
--   **VFS-6402** Disallowed creating more than one public handle for a
-    single share.
--   **VFS-6401** All authentication errors are now wrapped in
-    UNAUTHORIZED error and map to 401 HTTP code to avoid ambiguity when
-    reporting token related errors - tokens can be used for
-    authentication as well as input data for some operations (e.g.
-    invite tokens).
--   **VFS-6390** Because of asynchronous processing, it was possible
-    that GraphSync session cleanup intertwined with deleted record
-    cleanup (that removes corresponding subscriptions from sessions,
-    possibly including the session being cleaned up) and caused an error
-    that interrupted change propagation. Now, if the session is no
-    longer existent, subscription removal errors are ignored and the
-    propagation completes.
 -   **VFS-6378** Onepanel GUI and REST API now explicitly block
     supporting a space with more than one imported storage (globally) -
     such operation was possible in the past but was never supported by
     the internal storage import logic and led to incoherent view on
     space data.
--   **VFS-6369** Fix datastore internal call, batch management during
-    links listing and infinite loop during storage directories creation.
 -   **VFS-6358** Optimization of files upload through GUI.
 -   **VFS-6346** GUI improvements: added Oneprovider GUI notifications,
     better file selection, additional error handling, better file
@@ -109,6 +90,36 @@ CHANGELOG
 -   VFS-5742 Disabled yum proxy for package tests
 -   VFS-5742 Enabled proxy cache for package tests
 -   VFS-5742 Enabled proxy cache for docker builds
+
+### 19.02.4
+
+-   **VFS-6631** Rtransfer takes into account storage block size
+    choosing blocks to synchronize.
+-   **VFS-6607** Fix node restart with HA disabled.
+-   **VFS-6402** Disallowed creating more than one public handle for a
+    single share.
+-   **VFS-6401** All authentication errors are now wrapped in
+    UNAUTHORIZED error and map to 401 HTTP code to avoid ambiguity when
+    reporting token related errors - tokens can be used for
+    authentication as well as input data for some operations (e.g.
+    invite tokens).
+-   **VFS-6390** Because of asynchronous processing, it was possible
+    that GraphSync session cleanup intertwined with deleted record
+    cleanup (that removes corresponding subscriptions from sessions,
+    possibly including the session being cleaned up) and caused an error
+    that interrupted change propagation. Now, if the session is no
+    longer existent, subscription removal errors are ignored and the
+    propagation completes.
+-   **VFS-6369** Fix datastore internal call, batch management during
+    links listing and infinite loop during storage directories creation.
+
+### 19.02.3
+
+-   Minor bugfixes
+
+### 19.02.2
+
+-   Bugfixes and stability improvements
 
 ### 19.02.1
 
