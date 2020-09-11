@@ -1,4 +1,4 @@
-# distro for package building (oneof: xenial, fedora-23-x86_64)
+# distro for package building (oneof: xenial, bionic, centos-7-x86_64)
 RELEASE                 ?= $(shell cat ./RELEASE)
 DISTRIBUTION            ?= none
 DOCKER_RELEASE          ?= development
@@ -6,7 +6,8 @@ DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
 DOCKER_BASE_IMAGE       ?= "ubuntu:18.04"
-DOCKER_DEV_BASE_IMAGE   ?= "onedata/worker:1902-1"
+DOCKER_DEV_BASE_IMAGE   ?= "onedata/worker:2002-2"
+HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always --abbrev=7)
@@ -47,6 +48,7 @@ mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
 mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
+	mv $(1)/package/packages/*.diff.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*_source.changes package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*_amd64.deb package/$(DISTRIBUTION)/binary-amd64
 unpack = tar xzf $(1).tar.gz
@@ -227,6 +229,7 @@ docker: docker-dev
                       --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
                       --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
                       --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
+                      --build-arg HTTP_PROXY=$(HTTP_PROXY) \
                       --name onezone \
                       --publish --remove docker
 
@@ -240,6 +243,7 @@ docker-dev:
                       --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
                       --build-arg OZ_WORKER_VERSION=$(OZ_WORKER_VERSION) \
                       --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
+                      --build-arg HTTP_PROXY=$(HTTP_PROXY) \
                       --report docker-dev-build-report.txt \
                       --short-report docker-dev-build-list.json \
                       --name onezone-dev \

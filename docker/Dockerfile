@@ -12,6 +12,10 @@ ARG CLUSTER_MANAGER_VERSION
 ARG OZ_WORKER_VERSION
 ARG ONEZONE_VERSION
 ARG ONEPANEL_AUTOSTART=false
+ARG HTTP_PROXY
+
+# Enable Onedata devel package proxy cache
+ENV http_proxy ${HTTP_PROXY}
 
 # Add users and groups
 RUN groupadd -g 150 onedata && \
@@ -38,7 +42,7 @@ ENV LC_ALL en_US.UTF-8
 # Install onezone package
 RUN case ${RELEASE_TYPE} in \
         production) \
-            curl -O http://get.onedata.org/onezone-${RELEASE}.sh; \
+            curl -O http://packages.onedata.org/onezone-${RELEASE}.sh; \
             ;; \
         *) \
             curl -O http://packages.devel.onedata.org/onezone-${RELEASE}.sh; \
@@ -67,5 +71,8 @@ ADD onezone.py /root/onezone.py
 
 # Disable RANDFILE in OpenSSL
 RUN sed -i 's/^RANDFILE.*\.rnd/#&/' /etc/ssl/openssl.cnf
+
+# Disable http_proxy for normal operation
+ENV http_proxy ""
 
 CMD ["/root/onezone.sh"]

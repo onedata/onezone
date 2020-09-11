@@ -35,7 +35,8 @@ class Distribution(object):
 
 @pytest.fixture(scope='module')
 def setup_command():
-    return 'apt-get update && ' \
+    return 'echo -n \'Acquire::http::Proxy \"http://proxy.devel.onedata.org:3128\";\' > /etc/apt/apt.conf.d/proxy.conf && ' \
+        'apt-get update && ' \
         'apt-get install -y ca-certificates locales python wget python-pip gnupg2 libssl1.0.0 && ' \
         'pip install requests && ' \
         'wget -qO- {url}/onedata.gpg.key | apt-key add - && ' \
