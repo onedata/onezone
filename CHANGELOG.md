@@ -4,6 +4,8 @@ Release notes for project onezone
 CHANGELOG
 ---------
 
+### 19.02.5
+
 ### 19.02.4
 
 -   **VFS-6631** Rtransfer takes into account storage block size
