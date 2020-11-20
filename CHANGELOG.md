@@ -120,6 +120,8 @@ CHANGELOG
 -   VFS-5742 Enabled proxy cache for package tests
 -   VFS-5742 Enabled proxy cache for docker builds
 
+### 19.02.5
+
 ### 19.02.4
 
 -   **VFS-6631** Rtransfer takes into account storage block size
