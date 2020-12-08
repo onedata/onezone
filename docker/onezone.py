@@ -112,14 +112,22 @@ def generate_config_file(file_path):
 
 def start_onepanel():
     log('Starting oz_panel...')
-    with open(os.devnull, 'w') as null:
-        if os.environ.get(ONEPANEL_OVERRIDE):
-            sp.check_call([os.path.join(os.environ.get(ONEPANEL_OVERRIDE),
-                          '_build/default/rel/oz_panel/bin/oz_panel'),
-                           'start'])
-        else:
-            sp.check_call(['service', 'oz_panel', 'start'], stdout=null,
-                          stderr=null)
+
+    cmd = ['service', 'oz_panel', 'start']
+    if os.environ.get(ONEPANEL_OVERRIDE):
+        oz_panel_script = os.path.join(
+            os.environ.get(ONEPANEL_OVERRIDE),
+            "_build/default/rel/oz_panel/bin/oz_panel"
+        )
+        cmd = [oz_panel_script, 'start']
+
+    try:
+        sp.check_output(cmd)
+    except sp.CalledProcessError as err:
+        log('ERROR: ' + str(err))
+        log('Output was:\n')
+        log(str(err.output))
+        sys.exit(err.returncode)
 
     wait_for_rest_listener()
     log('[  OK  ] oz_panel started\n')
@@ -373,7 +381,7 @@ def show_details():
     show_ports(json)
 
 
-def infinite_loop(log_level):
+def print_logs(log_level, infinitely=True):
     logs = []
     if log_level in LOG_LEVELS:
         log('\nLogging on \'{0}\' level:'.format(log_level))
@@ -381,12 +389,13 @@ def infinite_loop(log_level):
             log_file = os.path.join(log_dir, log_level + '.log')
             logs.append((log_prefix, log_file, None, None))
 
-    while True:
-        logs = print_logs(logs)
+    logs = print_new_logs(logs)
+    while infinitely:
+        logs = print_new_logs(logs)
         time.sleep(1)
 
 
-def print_logs(logs):
+def print_new_logs(logs):
     new_logs = []
 
     for log_prefix, log_file, log_fd, log_ino in logs:
@@ -410,6 +419,7 @@ def print_logs(logs):
 
 
 if __name__ == '__main__':
+    current_log_level = os.environ.get('ONEPANEL_LOG_LEVEL', 'info').lower()
     try:
         sp.call(['/root/persistence-dir.py', '--copy-missing-files'])
 
@@ -464,12 +474,16 @@ if __name__ == '__main__':
 
         show_details()
     except Exception as e:
-        log('\n{0}'.format(e))
+        log('\nERROR: {0}'.format(e))
         if os.environ.get('ONEPANEL_DEBUG_MODE', 'false').lower() == 'true':
             pass
         else:
+            log(' ')
+            log('Below is a dump of all application logs at the moment of failure:')
+            log('-------------------------------------------------------------')
+            print_logs(current_log_level, infinitely=False)
+            log('-------------------------------------------------------------')
+            log('ERROR: Starting the container failed - see above.')
             sys.exit(1)
 
-    log_level = os.environ.get('ONEPANEL_LOG_LEVEL', 'info').lower()
-
-    infinite_loop(log_level)
+    print_logs(current_log_level, infinitely=True)
