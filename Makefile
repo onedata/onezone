@@ -5,8 +5,8 @@ DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-DOCKER_BASE_IMAGE       ?= "ubuntu:18.04"
-DOCKER_DEV_BASE_IMAGE   ?= "onedata/worker:2002-2"
+PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2002-1"
+DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2002-1"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
@@ -221,7 +221,7 @@ package.tar.gz:
 docker: docker-dev
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
                       --password $(DOCKER_REG_PASSWORD) \
-                      --build-arg BASE_IMAGE=$(DOCKER_BASE_IMAGE) \
+                      --build-arg BASE_IMAGE=$(PROD_RELEASE_BASE_IMAGE) \
                       --build-arg RELEASE=$(RELEASE) \
                       --build-arg RELEASE_TYPE=$(DOCKER_RELEASE) \
                       --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
@@ -237,7 +237,7 @@ docker-dev:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
                       --password $(DOCKER_REG_PASSWORD) \
                       --build-arg RELEASE=$(RELEASE) \
-                      --build-arg BASE_IMAGE=$(DOCKER_DEV_BASE_IMAGE) \
+                      --build-arg BASE_IMAGE=$(DEV_RELEASE_BASE_IMAGE) \
                       --build-arg OZ_PANEL_VERSION=$(OZ_PANEL_VERSION) \
                       --build-arg COUCHBASE_VERSION=$(COUCHBASE_VERSION) \
                       --build-arg CLUSTER_MANAGER_VERSION=$(CLUSTER_MANAGER_VERSION) \
