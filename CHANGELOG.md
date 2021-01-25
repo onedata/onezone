@@ -1,8 +1,11 @@
-Release notes for project onezone
-=================================
+# Release notes for project onezone
 
-CHANGELOG
----------
+## CHANGELOG
+
+### 20.02.6
+
+-   **VFS-6802** Added visual QoS expression editor with live matching
+    storages evaluation.
 
 ### 20.02.5
 
