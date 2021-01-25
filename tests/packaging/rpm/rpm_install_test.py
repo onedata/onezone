@@ -45,7 +45,7 @@ def setup_command():
         'yum -y install epel-release && ' \
         'yum -y install ca-certificates python wget curl && ' \
         'yum -y install python-setuptools python-pip && ' \
-        'pip install --upgrade pip && ' \
+        'pip install --upgrade pip==20.3.4 && ' \
         'pip install requests && ' \
         'curl -sSL "{url}/yum/{release}/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
         .format(url='http://packages.onedata.org', release=release)
