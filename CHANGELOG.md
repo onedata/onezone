@@ -4,6 +4,8 @@ Release notes for project onezone
 CHANGELOG
 ---------
 
+### 20.02.8
+
 ### 20.02.7
 
 -   **VFS-7413** Fixed displaying users with the same full name on
