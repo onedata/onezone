@@ -252,4 +252,4 @@ docker-dev:
 
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=node_package
+	@echo "Skipping codetag-tracker for release version 20.02.*"
