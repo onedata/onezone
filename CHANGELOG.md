@@ -1,8 +1,8 @@
-Release notes for project onezone
-=================================
+# Release notes for project onezone
 
-CHANGELOG
----------
+## CHANGELOG
+
+### 21.02.0-alpha10
 
 ### 21.02.0-alpha9
 
