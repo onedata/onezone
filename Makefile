@@ -5,8 +5,8 @@ DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2002-2"
-DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2002-2"
+PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-2"
+DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-2"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
