@@ -14,6 +14,10 @@ CHANGELOG
 -   **VFS-7741** Web GUI: showing proper error information page when
     there is no on-line supporting provider for share.
 
+### 21.02.0-alpha15
+
+-   **VFS-7747** Upgrade the codebase to Erlang OTP 24.
+
 ### 21.02.0-alpha14
 
 -   **VFS-7880** Introduce the concept of automation; tools for defining
