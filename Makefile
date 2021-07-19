@@ -5,8 +5,8 @@ DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-2"
-DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-2"
+PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-3"
+DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-3"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
@@ -31,6 +31,7 @@ OZ_WORKER_VERSION       := $(shell echo ${OZ_WORKER_VERSION} | tr - .)
 OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
+PKG_BUILDER_VERSION     ?= -2
 
 .PHONY: docker docker-dev package.tar.gz
 
@@ -42,10 +43,10 @@ all: build
 
 make = $(1)/make.py -s $(1) -r .
 clean = $(call make, $(1)) clean
-make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
+make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
 mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 	mv $(1)/package/packages/*.x86_64.rpm package/$(DISTRIBUTION)/x86_64
-make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
+make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
 mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.diff.gz package/$(DISTRIBUTION)/source | true && \
@@ -145,13 +146,13 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
 
-	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
+	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --buildsrpm --spec onezone_meta/onezone.spec \
 	        --sources onezone_meta --root $(DISTRIBUTION) \
 	        --resultdir onezone_meta/package/packages
 
-	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
+	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --rebuild onezone_meta/package/packages/*.src.rpm \
 	        --root $(DISTRIBUTION) --resultdir onezone_meta/package/packages
@@ -252,4 +253,4 @@ docker-dev:
 
 
 codetag-tracker:
-	@echo "Skipping codetag-tracker for release version 20.02.*"
+	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=node_package

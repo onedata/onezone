@@ -4,6 +4,12 @@ Release notes for project onezone
 CHANGELOG
 ---------
 
+### 21.02.0-alpha17
+
+-   **VFS-8018** Added HTTP storage driver option to limit on the client
+    side maximum number of requests per single session, after which the
+    session is closed and reconnected.
+
 ### 21.02.0-alpha16
 
 -   **VFS-7975** Added possibility to cancel running automation
@@ -13,6 +19,10 @@ CHANGELOG
     available.
 -   **VFS-7741** Web GUI: showing proper error information page when
     there is no on-line supporting provider for share.
+
+### 21.02.0-alpha15
+
+-   **VFS-7747** Upgrade the codebase to Erlang OTP 24.
 
 ### 21.02.0-alpha14
 
