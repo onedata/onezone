@@ -129,6 +129,15 @@ CHANGELOG
     Fixed inability to open share hosted by Oneprovider 19.02.x using
     Onezone 20.02.x.
 
+### 20.02.11
+
+-   **VFS-8016** Added option to POSIX storage driver to use different
+    root UID and GID than 0.
+-   **VFS-7995** Added custom Root UID and Root GID options for POSIX
+    storage.
+-   **VFS-7741** Web GUI: showing proper error information page when
+    there is no on-line supporting provider for share.
+
 ### 20.02.10
 
 ### 20.02.9
