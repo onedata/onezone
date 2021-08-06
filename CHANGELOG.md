@@ -143,6 +143,12 @@ CHANGELOG
     Fixed inability to open share hosted by Oneprovider 19.02.x using
     Onezone 20.02.x.
 
+### 20.02.12
+
+-   **VFS-8196** Add support for sets in OAI PMH. Every handle service
+    is considered a separate set, and all handles created using a handle
+    service belong to its corresponding set.
+
 ### 20.02.11
 
 -   **VFS-8016** Added option to POSIX storage driver to use different
