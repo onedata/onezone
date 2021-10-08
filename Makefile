@@ -8,6 +8,8 @@ DOCKER_REG_PASSWORD     ?= ""
 PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-3"
 DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-6"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
+RETRIES                 ?= 0
+RETRY_SLEEP             ?= 300
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always --abbrev=7)
@@ -43,6 +45,7 @@ all: build
 
 make = $(1)/make.py -s $(1) -r .
 clean = $(call make, $(1)) clean
+retry = RETRIES=$(RETRIES); until $(1) && return 0 || [ $$RETRIES -eq 0 ]; do sleep $(RETRY_SLEEP); RETRIES=`expr $$RETRIES - 1`; echo "\n\n\n===== Retrying build... ===="; done; return 1 
 make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
 mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 	mv $(1)/package/packages/*.x86_64.rpm package/$(DISTRIBUTION)/x86_64
@@ -110,7 +113,7 @@ artifact_onepanel:
 ##
 
 test_packaging:
-	./test_run.py --test-type packaging -vvv --test-dir tests/packaging -s
+	$(call retry, ./test_run.py --test-type packaging -vvv --test-dir tests/packaging -s)
 
 ##
 ## Clean
@@ -160,15 +163,15 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	$(call mv_rpm, onezone_meta)
 
 rpm_onepanel: clean_onepanel rpmdirs
-	$(call make_rpm, onepanel, package) -e PKG_VERSION=$(OZ_PANEL_VERSION) -e REL_TYPE=onezone
+	$(call retry, $(call make_rpm, onepanel, package) -e PKG_VERSION=$(OZ_PANEL_VERSION) -e REL_TYPE=onezone)
 	$(call mv_rpm, onepanel)
 
 rpm_oz_worker: clean_oz_worker rpmdirs
-	$(call make_rpm, oz_worker, package) -e PKG_VERSION=$(OZ_WORKER_VERSION)
+	$(call retry, $(call make_rpm, oz_worker, package) -e PKG_VERSION=$(OZ_WORKER_VERSION))
 	$(call mv_rpm, oz_worker)
 
 rpm_cluster_manager: clean_cluster_manager rpmdirs
-	$(call make_rpm, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION)
+	$(call retry, $(call make_rpm, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION))
 	$(call mv_rpm, cluster_manager)
 
 rpmdirs:
