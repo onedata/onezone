@@ -23,7 +23,6 @@ CHANGELOG
 -   **VFS-8247** Added new option to harverster\'s indices that allow
     for harvesting details about archives (archiveId, archiveDescription
     and archiveCreationTime).
--   **VFS-8242** Upgraded Oneclient to use Fuse 3 by default.
 -   **VFS-8172** Add \`/health\` endpoints to REST APIs of all services.
 -   **VFS-8073** Upgrade folly, wangle and proxygen libraries to version
     2021.01.04.00.
