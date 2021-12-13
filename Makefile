@@ -149,16 +149,16 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
 
-	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
+	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --buildsrpm --spec onezone_meta/onezone.spec \
 	        --sources onezone_meta --root $(DISTRIBUTION) \
-	        --resultdir onezone_meta/package/packages
+	        --resultdir onezone_meta/package/packages)
 
-	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
+	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --rebuild onezone_meta/package/packages/*.src.rpm \
-	        --root $(DISTRIBUTION) --resultdir onezone_meta/package/packages
+	        --root $(DISTRIBUTION) --resultdir onezone_meta/package/packages)
 
 	$(call mv_rpm, onezone_meta)
 
