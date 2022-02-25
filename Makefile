@@ -8,6 +8,8 @@ DOCKER_REG_PASSWORD     ?= ""
 PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2002-2"
 DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2002-2"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
+RETRIES                 ?= 0
+RETRY_SLEEP             ?= 300
 
 ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always --abbrev=7)
@@ -43,6 +45,7 @@ all: build
 make = $(1)/make.py -s $(1) -r .
 clean = $(call make, $(1)) clean
 make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
+retry = RETRIES=$(RETRIES); until $(1) && return 0 || [ $$RETRIES -eq 0 ]; do sleep $(RETRY_SLEEP); RETRIES=`expr $$RETRIES - 1`; echo "===== Cleaning up... ====="; $(if $2,$2,:); echo "\n\n\n===== Retrying build... ====="; done; return 1 
 mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 	mv $(1)/package/packages/*.x86_64.rpm package/$(DISTRIBUTION)/x86_64
 make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE) $(2)
@@ -109,7 +112,7 @@ artifact_onepanel:
 ##
 
 test_packaging:
-	./test_run.py --test-type packaging -vvv --test-dir tests/packaging -s
+	$(call retry, ./test_run.py --test-type packaging -vvv --test-dir tests/packaging -s)
 
 ##
 ## Clean
@@ -145,29 +148,29 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
 
-	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
+	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --buildsrpm --spec onezone_meta/onezone.spec \
 	        --sources onezone_meta --root $(DISTRIBUTION) \
-	        --resultdir onezone_meta/package/packages
+	        --resultdir onezone_meta/package/packages)
 
-	bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
+	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --rebuild onezone_meta/package/packages/*.src.rpm \
-	        --root $(DISTRIBUTION) --resultdir onezone_meta/package/packages
+	        --root $(DISTRIBUTION) --resultdir onezone_meta/package/packages)
 
 	$(call mv_rpm, onezone_meta)
 
 rpm_onepanel: clean_onepanel rpmdirs
-	$(call make_rpm, onepanel, package) -e PKG_VERSION=$(OZ_PANEL_VERSION) -e REL_TYPE=onezone
+	$(call retry, $(call make_rpm, onepanel, package) -e PKG_VERSION=$(OZ_PANEL_VERSION) -e REL_TYPE=onezone, make clean_onepanel rpmdirs)
 	$(call mv_rpm, onepanel)
 
 rpm_oz_worker: clean_oz_worker rpmdirs
-	$(call make_rpm, oz_worker, package) -e PKG_VERSION=$(OZ_WORKER_VERSION)
+	$(call retry, $(call make_rpm, oz_worker, package) -e PKG_VERSION=$(OZ_WORKER_VERSION), make clean_oz_worker rpmdirs)
 	$(call mv_rpm, oz_worker)
 
 rpm_cluster_manager: clean_cluster_manager rpmdirs
-	$(call make_rpm, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION)
+	$(call retry, $(call make_rpm, cluster_manager, package) -e PKG_VERSION=$(CLUSTER_MANAGER_VERSION), make clean_cluster_manager rpmdirs)
 	$(call mv_rpm, cluster_manager)
 
 rpmdirs:
