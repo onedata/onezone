@@ -6,6 +6,11 @@ CHANGELOG
 
 ### 20.02.16
 
+-   **VFS-9182** Improved EGI group mapping for special COU groups
+    \"admins\" and \"members\"; their names are now concatenated with
+    parent group names for better presentation. Additionally, \"admins\"
+    groups now get admin privileges in their parent groups instead of
+    default member privileges.
 -   **VFS-8704** Web GUI: Introduced more formatting-related functions
     and better UX of privacy policy editor in Onezone admin panel.
 
