@@ -12,7 +12,7 @@ The following submodules are used in the repository:
 | **Bamboo scripts** | https://github.com/onedata/bamboos | Bamboos contains common scripts used in Continuous Integration processes that use the Bamboo platform. |
 | **Cluster Manager** | https://github.com/onedata/cluster-manager | Common Onedata component shared between Onezone and Oneprovider, which monitors and controls Onedata worker processes at site level. |
 | **Onezone worker** | https://github.com/onedata/oz-worker | Main Onezone functional component, based on the **Cluster Worker** framework. |
-| **Onepanel** | https://github.com/onedata/onepanel | The Web GUI component |
+| **Onepanel** | https://github.com/onedata/onepanel | Onepanel administration service implementation. |
 
 In order to initialize all submodules please use:
 ```bash
