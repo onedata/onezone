@@ -4,6 +4,12 @@ Release notes for project onezone-pkg
 CHANGELOG
 ---------
 
+### 21.02.0-alpha25
+
+-   **VFS-8658** Rename "localceph" storage to "embeded ceph".
+-   **VFS-8483** Added direct NFS v3 storage helper.
+
+
 ### 21.02.0-alpha24
 
 -   **VFS-7724** Web GUI: redesigned datasets and archives browser to
