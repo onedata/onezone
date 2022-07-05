@@ -4,6 +4,17 @@ Release notes for project onezone-pkg
 CHANGELOG
 ---------
 
+### 21.02.0-alpha26
+
+-   **VFS-9207** Web GUI: Enforced loading fonts from server to avoid
+    incorrect local fonts in browser.
+-   **VFS-9083** Fix typo in NFS storage definition in onepanel REST
+    interface definition.
+-   **VFS-9036** Web GUI: Added showing time series charts in executed
+    automation workflows.
+-   **VFS-8043** Added support for the time series data type in
+    automation models.
+
 ### 21.02.0-alpha25
 
 -   **VFS-8658** Rename "localceph" storage to "embeded ceph".
