@@ -4,6 +4,18 @@ Release notes for project onezone-pkg
 CHANGELOG
 ---------
 
+### 21.02.0-rc1
+
+-   **VFS-9795** Web GUI: Fixed user logout from Onezone GUI after
+    remove from cluster members.
+-   **VFS-9162** Web GUI: Added api samples modal for space.
+-   **VFS-10235** Changed default value of `accountingEnabled` parameter
+    to `true` when requesting space support.
+-   **VFS-10234** Web GUI: Changed default space support options to have
+    directory size statistics aggregation turned on.
+-   **VFS-10128** Web GUI: Added possibility to map a lambda result to
+    many stores in an automation task definition.
+
 ### 21.02.0-alpha28
 
 -   **VFS-9614** Web GUI: Added archivisation audit log view.
