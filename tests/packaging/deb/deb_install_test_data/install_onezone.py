@@ -42,6 +42,8 @@ check_call(['sh', '-c', 'apt install -f -y '
 check_call(['sh', '-c',
             'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb '
             '; apt-get -f -y install'], stderr=STDOUT)
+check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y '
+            'python2 python-is-python2'], stderr=STDOUT)
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
                         .format(package=oz_panel_package)], stderr=STDOUT)
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
