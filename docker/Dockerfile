@@ -28,6 +28,9 @@ RUN case ${RELEASE_TYPE} in \
     sh onezone-${RELEASE}.sh onezone=${ONEZONE_VERSION}-1~${DISTRIBUTION} && \
     rm -f onezone-${RELEASE}.sh
 
+RUN pip3 install pyYAML
+RUN apt install -y python-is-python2
+
 # Backup files from persistence, as the persistent volume will be overwritten
 # by mounting it from host. The missing files will be copied back in entrypoint.
 ADD persistence-dir.py /root/persistence-dir.py

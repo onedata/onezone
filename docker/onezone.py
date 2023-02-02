@@ -65,7 +65,7 @@ def log(message, end='\n'):
 
 
 def replace(file_path, pattern, value):
-    with open(file_path, 'rw+') as f:
+    with open(file_path, 'r+') as f:
         content = f.read()
         content = re.sub(pattern, value, content)
         f.seek(0)
@@ -74,7 +74,7 @@ def replace(file_path, pattern, value):
 
 
 def set_node_name(file_path):
-    hostname = sp.check_output(['hostname', '-f']).rstrip('\n')
+    hostname = sp.check_output(['hostname', '-f']).rstrip(b'\n')
     replace(file_path, r'-name .*', '-name onepanel@{0}'.format(hostname))
 
 
