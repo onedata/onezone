@@ -74,7 +74,7 @@ def replace(file_path, pattern, value):
 
 
 def set_node_name(file_path):
-    hostname = sp.check_output(['hostname', '-f']).rstrip(b'\n')
+    hostname = sp.check_output(['hostname', '-f']).decode().rstrip('\n')
     replace(file_path, r'-name .*', '-name onepanel@{0}'.format(hostname))
 
 
