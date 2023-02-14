@@ -29,65 +29,6 @@ stages:
     final: false
     jobs:
     - Publish dockers
-Codetag Tracker:
-  key: CT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
-  tasks:
-  - checkout:
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-
-        # initialize submodules to get default packages versions
-        make submodules
-      description: Initialize submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
-      description: Codetag Tracker
-  final-tasks:
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  artifacts:
-  - name: centos7.tar.gz
-    pattern: centos7.tar.gz
-    shared: false
-    required: false
-  - name: oz-worker-build.log
-    location: oz_worker/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: oz-panel-build.log
-    location: ./onepanel/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: cluster_manager-build.log
-    location: cluster_manager/package/packages
-    pattern: build.log
-    shared: false
-    required: false
-  requirements:
-  - system.docker.executable
-  - onedata
-  artifact-subscriptions: []
 Build onezone Focal:
   key: BOB
   other:
@@ -198,6 +139,65 @@ Build onezone CentOS 7:
     pattern: centos7.tar.gz
     shared: true
     required: false
+  - name: oz-worker-build.log
+    location: oz_worker/package/packages/
+    pattern: build.log
+    shared: false
+    required: false
+  - name: oz-panel-build.log
+    location: ./onepanel/package/packages/
+    pattern: build.log
+    shared: false
+    required: false
+  - name: cluster_manager-build.log
+    location: cluster_manager/package/packages
+    pattern: build.log
+    shared: false
+    required: false
+  requirements:
+  - system.docker.executable
+  - onedata
+  artifact-subscriptions: []
+Codetag Tracker:
+  key: CT
+  other:
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout:
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+
+        # initialize submodules to get default packages versions
+        make submodules
+      description: Initialize submodules
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+      description: Codetag Tracker
+  final-tasks:
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  artifacts:
+  # - name: centos7.tar.gz
+  #   pattern: centos7.tar.gz
+  #   shared: false
+  #   required: false
   - name: oz-worker-build.log
     location: oz_worker/package/packages/
     pattern: build.log
