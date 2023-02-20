@@ -6,12 +6,10 @@ CHANGELOG
 
 ### 21.02.0-rc2
 
--   **VFS-9999** Web GUI: Added space details popovers with space
-    information in various views.
--   **VFS-9795** Web GUI: Fixed user logout from Onezone GUI after
-    remove from cluster members.
--   **VFS-9162** Web GUI: Added API samples modal for space.
--   **VFS-9129** Web GUI: Upgraded EmberJS to v3.8.
+-   **VFS-10502** Added option to null device enabling verification of
+    whether read data matches written data based on offset and size of
+    request, which can be used to test for instance transfer data
+    consistency.
 -   **VFS-10432** Web GUI: Fixed cookie notification appearing after
     consenting and starting new web browser session.
 -   **VFS-10414** Web GUI: Fixed displaying wrong names of spaces in
@@ -38,6 +36,12 @@ CHANGELOG
     constraints.
 -   **VFS-10046** Web GUI: Added user details popovers with user
     information in various views.
+-   **VFS-9999** Web GUI: Added space details popovers with space
+    information in various views.
+-   **VFS-9795** Web GUI: Fixed user logout from Onezone GUI after
+    remove from cluster members.
+-   **VFS-9162** Web GUI: Added API samples modal for space.
+-   **VFS-9129** Web GUI: Upgraded EmberJS to v3.8.
 
 ### 21.02.0-alpha28
 
