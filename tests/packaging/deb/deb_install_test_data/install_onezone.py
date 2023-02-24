@@ -32,22 +32,20 @@ check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/xenial/pool/' \
                     'main/c/couchbase-server-community/couchbase-' \
                     'server-community_4.5.1-ubuntu14.04_amd64.deb'])
 
-check_call(['wget', 'http://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0'
-                        '/libssl1.0.0_1.0.2n-1ubuntu5_amd64.deb'])
+check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/2102/pool/main/o/openssl1.0'
+                    '/libssl1.0.0_1.0.2n-1ubuntu5~focal_amd64.deb'])
 
 # install packages
 check_call(['sh', '-c', 'apt install -f -y '
-                './libssl1.0.0_1.0.2n-1ubuntu5_amd64.deb'
-                            ], stderr=STDOUT)
-check_call(['sh', '-c',
-            'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb '
-            '; apt-get -f -y install'], stderr=STDOUT)
+                        './libssl1.0.0_1.0.2n-1ubuntu5~focal_amd64.deb'], stderr=STDOUT)
+check_call(['sh', '-c', 'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb;'
+                        'apt-get -f -y install'], stderr=STDOUT)
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y '
-            'python2 python-is-python2'], stderr=STDOUT)
+                        'python2 python-is-python2'], stderr=STDOUT)
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
                         .format(package=oz_panel_package)], stderr=STDOUT)
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
-                .format(package=cluster_manager_package)], stderr=STDOUT)
+                        .format(package=cluster_manager_package)], stderr=STDOUT)
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
                         .format(package=oz_worker_package)], stderr=STDOUT)
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'

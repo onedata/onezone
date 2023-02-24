@@ -64,11 +64,6 @@ Codetag Tracker:
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       description: Clear env
-  artifacts:
-  # - name: centos7.tar.gz
-  #   pattern: centos7.tar.gz
-  #   shared: false
-  #   required: false
   - name: oz-worker-build.log
     location: oz_worker/package/packages/
     pattern: build.log
