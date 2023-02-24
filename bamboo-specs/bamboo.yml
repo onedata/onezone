@@ -64,21 +64,6 @@ Codetag Tracker:
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       description: Clear env
-  - name: oz-worker-build.log
-    location: oz_worker/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: oz-panel-build.log
-    location: ./onepanel/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: cluster_manager-build.log
-    location: cluster_manager/package/packages
-    pattern: build.log
-    shared: false
-    required: false
   requirements:
   - system.docker.executable
   - onedata
