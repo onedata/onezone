@@ -4,6 +4,13 @@ Release notes for project onezone-pkg
 CHANGELOG
 ---------
 
+### 20.02.20
+
+-   **VFS-10432** Web GUI: Fixed cookie notification appearing after
+    consenting and starting new web browser session.
+-   **VFS-9795** Web GUI: Fixed user logout from Onezone GUI after
+    remove from cluster members.
+
 ### 20.02.19
 
 -   **VFS-9926** Web GUI: Opening Oneprovider view in Onezone GUI when
