@@ -1,0 +1,506 @@
+---
+version: 2
+plan:
+  project-key: ODSRV
+  key: OZP
+  name: Onezone packages
+stages:
+- Build:
+    description: Build packages
+    manual: false
+    final: false
+    jobs:
+    - Codetag Tracker
+    - Build onezone Bionic
+    # - Build onezone Xenial
+    - Build onezone CentOS 7
+- Test:
+    description: Test created packages
+    manual: false
+    final: false
+    jobs:
+    - Test packages
+- Publish packages:
+    manual: false
+    final: false
+    jobs:
+    - Publish packages
+- Publish dockers:
+    manual: false
+    final: false
+    jobs:
+    - Publish dockers
+Codetag Tracker:
+  key: CT
+  other:
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout:
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+
+        # initialize submodules to get default packages versions
+        make submodules
+      description: Initialize submodules
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+      description: Codetag Tracker
+  final-tasks:
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  artifacts:
+  - name: centos7.tar.gz
+    pattern: centos7.tar.gz
+    shared: false
+    required: false
+  - name: oz-worker-build.log
+    location: oz_worker/package/packages/
+    pattern: build.log
+    shared: false
+    required: false
+  - name: oz-panel-build.log
+    location: ./onepanel/package/packages/
+    pattern: build.log
+    shared: false
+    required: false
+  - name: cluster_manager-build.log
+    location: cluster_manager/package/packages
+    pattern: build.log
+    shared: false
+    required: false
+  requirements:
+  - system.docker.executable
+  - onedata
+  artifact-subscriptions: []
+Build onezone Bionic:
+  key: BOB
+  other:
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout:
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+
+        RELEASE=$(cat RELEASE)
+
+        if [ "${RELEASE}x" = "1802x" ]; then
+            echo "##############################################"
+            echo "Release 1802 doesn't support Bionic - skipping"
+            echo "##############################################"
+            mkdir -p package
+            exit 0
+        fi
+
+        # initialize submodules to get default packages versions
+        make submodules
+
+        DISTRIBUTION=bionic \
+        ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
+        CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
+        OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
+        OZ_PANEL_VERSION=$bamboo_OZ_PANEL_VERSION \
+        make deb
+      description: Build
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - tar -chzf bionic.tar.gz package
+      description: Package
+  final-tasks:
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  artifacts:
+  - name: bionic.tar.gz
+    pattern: bionic.tar.gz
+    shared: true
+    required: false
+  requirements:
+  - system.docker.executable
+  - onedata
+  - onedata-pkg-builder
+  artifact-subscriptions: []
+# Build onezone Xenial:
+#   key: BOX
+#   other:
+#     clean-working-dir: true
+#     all-other-apps:
+#       custom:
+#         auto: {}
+#         clover:
+#           useLocalLicenseKey: 'true'
+#         buildHangingConfig.enabled: 'false'
+#   tasks:
+#   - checkout:
+#       force-clean-build: 'true'
+#       description: Checkout Default Repository
+#   - script:
+#       interpreter: BINSH_OR_CMDEXE
+#       scripts:
+#       - |-
+#         git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+#         git remote -v
+
+#         # initialize submodules to get default packages versions
+#         make submodules
+
+#         DISTRIBUTION=xenial \
+#         ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
+#         CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
+#         OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
+#         OZ_PANEL_VERSION=$bamboo_OZ_PANEL_VERSION \
+#         make deb
+#       description: Build
+#   - script:
+#       interpreter: BINSH_OR_CMDEXE
+#       scripts:
+#       - tar -chzf xenial.tar.gz package
+#       description: Package
+#   final-tasks:
+#   - script:
+#       interpreter: BINSH_OR_CMDEXE
+#       scripts:
+#       - curl ${bamboo.OnedataFinalTasksURL} | bash -
+#       description: Clear env
+#   artifacts:
+#   - name: xenial.tar.gz
+#     pattern: xenial.tar.gz
+#     shared: true
+#     required: false
+#   requirements:
+#   - system.docker.executable
+#   - onedata
+#   - onedata-pkg-builder
+#   artifact-subscriptions: []
+Build onezone CentOS 7:
+  key: RPM
+  other:
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout:
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+
+        # initialize submodules to get default packages versions
+        make submodules
+
+        DISTRIBUTION=centos-7-x86_64 \
+        ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
+        CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
+        OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
+        OZ_PANEL_VERSION=$bamboo_OZ_PANEL_VERSION \
+        RETRIES=3 \
+        make rpm
+      description: Build
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - tar -chzf centos7.tar.gz package
+      description: Package
+  final-tasks:
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  artifacts:
+  - name: centos7.tar.gz
+    pattern: centos7.tar.gz
+    shared: true
+    required: false
+  - name: oz-worker-build.log
+    location: oz_worker/package/packages/
+    pattern: build.log
+    shared: false
+    required: false
+  - name: oz-panel-build.log
+    location: ./onepanel/package/packages/
+    pattern: build.log
+    shared: false
+    required: false
+  - name: cluster_manager-build.log
+    location: cluster_manager/package/packages
+    pattern: build.log
+    shared: false
+    required: false
+  requirements:
+  - system.docker.executable
+  - onedata
+  artifact-subscriptions: []
+Test packages:
+  key: TEST
+  description: Test created packages
+  other:
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout:
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        tar -xzf bionic.tar.gz
+        tar -xzf centos7.tar.gz
+      description: Unpack package artifacts
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+
+        make submodule=bamboos submodules
+        RETRIES=3 make test_packaging
+      description: Test
+  final-tasks:
+  - test-parser:
+      type: junit
+      ignore-time: 'false'
+      test-results: test-reports/results.xml
+      description: Parse test results
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  requirements:
+  - onedata
+  artifact-subscriptions:
+  - artifact: centos7.tar.gz
+  - artifact: bionic.tar.gz
+Publish packages:
+  key: PP
+  other:
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout:
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        set -e
+
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+        make submodule=bamboos submodules
+
+        # Check if the repo contains RELEASE file containing major Onedata release tag (e.g. 1802)
+        # If not publish to legacy repositories
+        if test -f RELEASE; then
+            RELEASE=$(cat RELEASE)
+            ./pkg.py --host docker_packages_devel --release $RELEASE push centos7.tar.gz
+            mv pkg-list.json centos7-pkg-list.json
+            if [ $RELEASE -ge 1902 ]; then
+                # Bionic is not supported on 1802
+                ./pkg.py --host docker_packages_devel --release $RELEASE push bionic.tar.gz
+                mv pkg-list.json bionic-pkg-list.json
+            fi
+        else
+            ./pkg.py --host docker_packages_devel push xenial.tar.gz
+            mv pkg-list.json xenial-pkg-list.json
+            ./pkg.py --host docker_packages_devel push centos7.tar.gz
+            mv pkg-list.json centos7-pkg-list.json
+        fi
+      description: Publish
+  final-tasks:
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  artifacts:
+  - name: centos7-pkg-list.json
+    pattern: centos7-pkg-list.json
+    shared: true
+    required: true
+  - name: bionic-pkg-list.json
+    pattern: bionic-pkg-list.json
+    shared: true
+    required: false
+  requirements:
+  - publish_packages
+  - onedata-quick
+  artifact-subscriptions:
+  - artifact: centos7.tar.gz
+  - artifact: bionic.tar.gz
+Publish dockers:
+  key: PD
+  other:
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout:
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+
+
+        # initialize submodules to get default packages versions
+        make submodules
+
+        ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
+        CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
+        OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
+        OZ_PANEL_VERSION=$bamboo_OZ_PANEL_VERSION \
+        make docker
+      description: Publish
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        mkdir onezone_images
+        cp docker-dev-build-list.json onezone_images/
+        cp docker-build-list.json onezone_images/
+        tar -czf ${bamboo.planRepository.name}.tar.gz onezone_images/
+      description: Package
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+            --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+            --source-file-path ${bamboo.planRepository.name}.tar.gz
+      description: Push artifact
+  final-tasks:
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  artifacts:
+  - name: docker-build-report.txt
+    pattern: docker-build-report.txt
+    shared: false
+    required: false
+  - name: docker-build-list.json
+    pattern: docker-build-list.json
+    shared: true
+    required: false
+  - name: docker-dev-build-report.txt
+    pattern: docker-dev-build-report.txt
+    shared: false
+    required: false
+  - name: docker-dev-build-list.json
+    pattern: docker-dev-build-list.json
+    shared: true
+    required: false
+  requirements:
+  - onedata
+  artifact-subscriptions: []
+# variables:
+#   CLUSTER_MANAGER_VERSION: ''
+#   ONEZONE_VERSION: ''
+#   OZ_PANEL_VERSION: ''
+#   OZ_WORKER_VERSION: ''
+repositories:
+- onezone-pkg:
+    scope: global
+branches:
+  create:
+    for-new-branch: release/.*
+  delete:
+    after-deleted-days: 7
+    after-inactive-days: 30
+  link-to-jira: true
+notifications: []
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans:
+  - ODSRV-K8SD
+  - ODSRV-MAOPT
+  - ODSRV-UP
+  - ODSRV-OAP
+  - ODSRV-GAPT
+other:
+  concurrent-build-plugin: system-default
+  all-other-apps:
+    custom.com.atlassian.bamboo.plugin.hungbuildkiller.stopped.enabled: 'true'
+---
+version: 2
+plan:
+  key: ODSRV-OZPC
+plan-permissions:
+- users:
+  - plgdutka
+  - plgktrzepla
+  - plgnikolow
+  groups:
+  - plggveildev
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+...
