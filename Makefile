@@ -5,8 +5,8 @@ DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-3"
-DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-7"
+PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-4"
+DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-8"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 RETRIES                 ?= 0
 RETRY_SLEEP             ?= 300
@@ -33,7 +33,7 @@ OZ_WORKER_VERSION       := $(shell echo ${OZ_WORKER_VERSION} | tr - .)
 OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
-PKG_BUILDER_VERSION     ?= -3
+PKG_BUILDER_VERSION     ?= -4
 
 .PHONY: docker docker-dev package.tar.gz
 
@@ -49,7 +49,7 @@ retry = RETRIES=$(RETRIES); until $(1) && return 0 || [ $$RETRIES -eq 0 ]; do sl
 make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
 mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 	mv $(1)/package/packages/*.x86_64.rpm package/$(DISTRIBUTION)/x86_64
-make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
+make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --grant-sudo-rights --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
 mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.diff.gz package/$(DISTRIBUTION)/source | true && \

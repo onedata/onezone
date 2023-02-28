@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import json
@@ -65,7 +65,7 @@ def log(message, end='\n'):
 
 
 def replace(file_path, pattern, value):
-    with open(file_path, 'rw+') as f:
+    with open(file_path, 'r+') as f:
         content = f.read()
         content = re.sub(pattern, value, content)
         f.seek(0)
@@ -74,7 +74,7 @@ def replace(file_path, pattern, value):
 
 
 def set_node_name(file_path):
-    hostname = sp.check_output(['hostname', '-f']).rstrip('\n')
+    hostname = sp.check_output(['hostname', '-f']).decode().rstrip('\n')
     replace(file_path, r'-name .*', '-name onepanel@{0}'.format(hostname))
 
 
@@ -283,7 +283,7 @@ def format_error(response):
 
 def format_dict(details, indent):
     result = ''
-    for key, value in details.items():
+    for key, value in list(details.items()):
         if isinstance(value, dict):
             result += indent + '{}:\n'.format(key)
             result += format_dict(value, indent + '  ')
@@ -349,7 +349,7 @@ def show_ip_address(json):
     ip = '-'
     try:
         ip = sp.check_output(['hostname', '-i']).rstrip('\n')
-        ip = json['NetworkSettings']['Networks'].items()[0][1]['IPAddress']
+        ip = list(json['NetworkSettings']['Networks'].items())[0][1]['IPAddress']
     except Exception:
         pass
     log('* IP Address: {0}'.format(ip))

@@ -11,8 +11,7 @@ stages:
     final: false
     jobs:
     - Codetag Tracker
-    - Build onezone Bionic
-    # - Build onezone Xenial
+    - Build onezone Focal
     - Build onezone CentOS 7
 - Test:
     description: Test created packages
@@ -65,31 +64,11 @@ Codetag Tracker:
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       description: Clear env
-  artifacts:
-  - name: centos7.tar.gz
-    pattern: centos7.tar.gz
-    shared: false
-    required: false
-  - name: oz-worker-build.log
-    location: oz_worker/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: oz-panel-build.log
-    location: ./onepanel/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: cluster_manager-build.log
-    location: cluster_manager/package/packages
-    pattern: build.log
-    shared: false
-    required: false
   requirements:
   - system.docker.executable
   - onedata
   artifact-subscriptions: []
-Build onezone Bionic:
+Build onezone Focal:
   key: BOB
   other:
     clean-working-dir: true
@@ -114,7 +93,7 @@ Build onezone Bionic:
 
         if [ "${RELEASE}x" = "1802x" ]; then
             echo "##############################################"
-            echo "Release 1802 doesn't support Bionic - skipping"
+            echo "Release 1802 doesn't support Focal - skipping"
             echo "##############################################"
             mkdir -p package
             exit 0
@@ -123,7 +102,7 @@ Build onezone Bionic:
         # initialize submodules to get default packages versions
         make submodules
 
-        DISTRIBUTION=bionic \
+        DISTRIBUTION=focal \
         ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
         CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
         OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
@@ -133,7 +112,7 @@ Build onezone Bionic:
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
-      - tar -chzf bionic.tar.gz package
+      - tar -chzf focal.tar.gz package
       description: Package
   final-tasks:
   - script:
@@ -142,8 +121,8 @@ Build onezone Bionic:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       description: Clear env
   artifacts:
-  - name: bionic.tar.gz
-    pattern: bionic.tar.gz
+  - name: focal.tar.gz
+    pattern: focal.tar.gz
     shared: true
     required: false
   requirements:
@@ -151,58 +130,6 @@ Build onezone Bionic:
   - onedata
   - onedata-pkg-builder
   artifact-subscriptions: []
-# Build onezone Xenial:
-#   key: BOX
-#   other:
-#     clean-working-dir: true
-#     all-other-apps:
-#       custom:
-#         auto: {}
-#         clover:
-#           useLocalLicenseKey: 'true'
-#         buildHangingConfig.enabled: 'false'
-#   tasks:
-#   - checkout:
-#       force-clean-build: 'true'
-#       description: Checkout Default Repository
-#   - script:
-#       interpreter: BINSH_OR_CMDEXE
-#       scripts:
-#       - |-
-#         git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-#         git remote -v
-
-#         # initialize submodules to get default packages versions
-#         make submodules
-
-#         DISTRIBUTION=xenial \
-#         ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
-#         CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
-#         OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
-#         OZ_PANEL_VERSION=$bamboo_OZ_PANEL_VERSION \
-#         make deb
-#       description: Build
-#   - script:
-#       interpreter: BINSH_OR_CMDEXE
-#       scripts:
-#       - tar -chzf xenial.tar.gz package
-#       description: Package
-#   final-tasks:
-#   - script:
-#       interpreter: BINSH_OR_CMDEXE
-#       scripts:
-#       - curl ${bamboo.OnedataFinalTasksURL} | bash -
-#       description: Clear env
-#   artifacts:
-#   - name: xenial.tar.gz
-#     pattern: xenial.tar.gz
-#     shared: true
-#     required: false
-#   requirements:
-#   - system.docker.executable
-#   - onedata
-#   - onedata-pkg-builder
-#   artifact-subscriptions: []
 Build onezone CentOS 7:
   key: RPM
   other:
@@ -289,7 +216,7 @@ Test packages:
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - |-
-        tar -xzf bionic.tar.gz
+        tar -xzf focal.tar.gz
         tar -xzf centos7.tar.gz
       description: Unpack package artifacts
   - script:
@@ -317,7 +244,7 @@ Test packages:
   - onedata
   artifact-subscriptions:
   - artifact: centos7.tar.gz
-  - artifact: bionic.tar.gz
+  - artifact: focal.tar.gz
 Publish packages:
   key: PP
   other:
@@ -349,9 +276,9 @@ Publish packages:
             ./pkg.py --host docker_packages_devel --release $RELEASE push centos7.tar.gz
             mv pkg-list.json centos7-pkg-list.json
             if [ $RELEASE -ge 1902 ]; then
-                # Bionic is not supported on 1802
-                ./pkg.py --host docker_packages_devel --release $RELEASE push bionic.tar.gz
-                mv pkg-list.json bionic-pkg-list.json
+                # Focal is not supported on 1802
+                ./pkg.py --host docker_packages_devel --release $RELEASE push focal.tar.gz
+                mv pkg-list.json focal-pkg-list.json
             fi
         else
             ./pkg.py --host docker_packages_devel push xenial.tar.gz
@@ -371,8 +298,8 @@ Publish packages:
     pattern: centos7-pkg-list.json
     shared: true
     required: true
-  - name: bionic-pkg-list.json
-    pattern: bionic-pkg-list.json
+  - name: focal-pkg-list.json
+    pattern: focal-pkg-list.json
     shared: true
     required: false
   requirements:
@@ -380,7 +307,7 @@ Publish packages:
   - onedata-quick
   artifact-subscriptions:
   - artifact: centos7.tar.gz
-  - artifact: bionic.tar.gz
+  - artifact: focal.tar.gz
 Publish dockers:
   key: PD
   other:
@@ -477,11 +404,11 @@ dependencies:
   enabled-for-branches: true
   block-strategy: none
   plans:
-  - ODSRV-K8SD
-  - ODSRV-MAOPT
-  - ODSRV-UP
-  - ODSRV-OAP
-  - ODSRV-GAPT
+    - ODSRV-K8SD
+    - ODSRV-MAOPT
+    - ODSRV-UP
+    - ODSRV-OAP
+    - ODSRV-GAPT
 other:
   concurrent-build-plugin: system-default
   all-other-apps:
@@ -489,7 +416,7 @@ other:
 ---
 version: 2
 plan:
-  key: ODSRV-OZPC
+  key: ODSRV-OZP
 plan-permissions:
 - users:
   - plgdutka

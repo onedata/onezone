@@ -37,7 +37,7 @@ class Distribution(object):
 def setup_command():
     return 'echo -n \'Acquire::http::Proxy \"http://proxy.devel.onedata.org:3128\";\' > /etc/apt/apt.conf.d/proxy.conf && ' \
         'apt-get update && ' \
-        'apt-get install -y ca-certificates locales python wget python-pip gnupg2 libssl1.0.0 && ' \
+        'apt-get install -y ca-certificates locales python3 wget python3-pip gnupg2 libssl1.1 && ' \
         'pip install requests && ' \
         'wget -qO- {url}/onedata.gpg.key | apt-key add - && ' \
         'echo "deb {url}/apt/ubuntu/{{release}} {{dist}} main" > /etc/apt/sources.list.d/onedata.list && ' \
@@ -47,7 +47,7 @@ def setup_command():
 
 
 @pytest.fixture(scope='module',
-                params=['bionic'])
+                params=['focal'])
 def onezone(request, setup_command):
     distribution = Distribution(request)
     command = setup_command.format(dist=distribution.name,
@@ -64,5 +64,5 @@ def test_onezone_installation(onezone):
     assert 0 == docker.exec_(onezone.container,
                              interactive=True,
                              tty=True,
-                             command='python /root/data/install_onezone.py ' \
+                             command='python3 /root/data/install_onezone.py ' \
                                      '{}'.format(onezone.name,))

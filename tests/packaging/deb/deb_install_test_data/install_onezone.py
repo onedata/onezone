@@ -7,7 +7,7 @@ from subprocess import STDOUT, check_call, check_output
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-dist = sys.argv[1]
+dist = sys.argv[1].encode()
 
 EMERGENCY_USERNAME = 'onepanel'
 EMERGENCY_PASSPHRASE = 'passphrase'
@@ -16,33 +16,39 @@ EMERGENCY_PASSPHRASE = 'passphrase'
 packages = check_output(['ls', '/root/pkg']).split()
 packages = sorted(packages, reverse=True)
 oz_panel_package = \
-    [path for path in packages if path.startswith('oz-panel')
-                                  and (dist in path)][0]
+    [path for path in packages if path.decode().startswith('oz-panel')
+                                  and (dist in path)][0].decode()
 cluster_manager_package = \
-    [path for path in packages if path.startswith('cluster-manager')
-                                  and (dist in path)][0]
+    [path for path in packages if path.decode().startswith('cluster-manager')
+                                  and (dist in path)][0].decode()
 oz_worker_package = \
-    [path for path in packages if path.startswith('oz-worker')
-                                  and (dist in path)][0]
-onezone_package = [path for path in packages if path.startswith('onezone')
-                                                and (dist in path)][0]
+    [path for path in packages if path.decode().startswith('oz-worker')
+                                  and (dist in path)][0].decode()
+onezone_package = [path for path in packages if path.decode().startswith('onezone')
+                                                and (dist in path)][0].decode()
 
 # get couchbase
 check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/xenial/pool/' \
                     'main/c/couchbase-server-community/couchbase-' \
                     'server-community_4.5.1-ubuntu14.04_amd64.deb'])
 
+check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/2102/pool/main/o/openssl1.0'
+                    '/libssl1.0.0_1.0.2n-1ubuntu5~focal_amd64.deb'])
+
 # install packages
-check_call(['sh', '-c',
-            'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb '
-            '; apt-get -f -y install'], stderr=STDOUT)
-check_call(['sh', '-c', 'apt install -y /root/pkg/{package}'
+check_call(['sh', '-c', 'apt install -f -y '
+                        './libssl1.0.0_1.0.2n-1ubuntu5~focal_amd64.deb'], stderr=STDOUT)
+check_call(['sh', '-c', 'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb;'
+                        'apt-get -f -y install'], stderr=STDOUT)
+check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y '
+                        'python2 python-is-python2'], stderr=STDOUT)
+check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
                         .format(package=oz_panel_package)], stderr=STDOUT)
-check_call(['sh', '-c', 'apt install -y /root/pkg/{package}'
-                .format(package=cluster_manager_package)], stderr=STDOUT)
-check_call(['sh', '-c', 'apt install -y /root/pkg/{package}'
+check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
+                        .format(package=cluster_manager_package)], stderr=STDOUT)
+check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
                         .format(package=oz_worker_package)], stderr=STDOUT)
-check_call(['sh', '-c', ' apt install -y /root/pkg/{package}'
+check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y /root/pkg/{package}'
                         .format(package=onezone_package)], stderr=STDOUT)
 
 # validate packages installation
