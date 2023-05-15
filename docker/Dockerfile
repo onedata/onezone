@@ -35,13 +35,16 @@ RUN apt install -y python-is-python2
 # by mounting it from host. The missing files will be copied back in entrypoint.
 ADD persistence-dir.py /root/persistence-dir.py
 RUN python3 /root/persistence-dir.py --backup-persistent-files
-
 # Create symlinks to persistence
 RUN python3 /root/persistence-dir.py --create-symlinks
 
-# Add entrypoint scripts
+# Add scripts handling service starting and stopping
 ADD onezone.sh /root/onezone.sh
 ADD onezone.py /root/onezone.py
+ADD onezone-stop-graceful.sh /root/onezone-stop-graceful.sh
+ADD internal-scripts/onezone-do-stop.sh /root/internal-scripts/onezone-do-stop.sh
+ADD internal-scripts/onezone-ensure-stopped.sh /root/internal-scripts/onezone-ensure-stopped.sh
+ADD internal-scripts/common.sh /root/internal-scripts/common.sh
 
 # Disable http_proxy for normal operation
 ENV http_proxy ""
