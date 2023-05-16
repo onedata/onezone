@@ -9,7 +9,7 @@
 ### to run, especially if the service is busy.
 ###
 ### After the script has finished, it is safe to shut down the Onezone
-### docker container. The script then leaves a
+### docker container. The script creates a lock file to indicate it.
 ###
 ### The output is also printed to the main process's stdout.
 ###-------------------------------------------------------------------
