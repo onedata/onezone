@@ -64,9 +64,7 @@ Codetag Tracker:
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       description: Clear env
-  requirements:
-  - system.docker.executable
-  - onedata
+  requirements: []
   artifact-subscriptions: []
 Build onezone Focal:
   key: BOB
