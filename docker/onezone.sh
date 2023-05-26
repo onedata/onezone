@@ -2,6 +2,8 @@
 
 source /root/internal-scripts/common.sh
 
+# @TODO VFS-10947-make-sure-onezone-oneprovider-entrypoint-is-started-with-pid-1
+
 function on_termination_signal {
     dispatch-log "Received a termination signal"
     /root/internal-scripts/onezone-ensure-stopped.sh
