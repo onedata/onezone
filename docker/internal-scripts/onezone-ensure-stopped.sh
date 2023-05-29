@@ -66,8 +66,8 @@ EOF
     cat <<EOF
 This may cause database inconsistencies or loss of recent changes of persistent data!
 
-You should always use the graceful stop procedure - call the
-'/root/onezone-stop-graceful.sh' script before terminating the service.
+You should ALWAYS use the graceful stop procedure - call the
+'/root/onezone-stop-graceful.sh' script BEFORE terminating the container.
 Depending on the installation type, there are several ways to do that:
 
     * onedata-deployments - in the recent version (21.02.2+) of this repo,
@@ -77,8 +77,11 @@ Depending on the installation type, there are several ways to do that:
     * docker-compose - do not use 'docker-compose down' directly, precede
       it with calling the graceful stop script. If you have to use
       'docker-compose down', use the 'stop_grace_period' option set to a
-      large value (e.g. '30m'). The default value of 10 seconds is
+      large value (e.g. '60m'). The default value of 10 seconds is
       way too low for a graceful shutdown.
+
+    * docker - see above; do not use 'docker stop' directly, or provide
+      the '--time' option with a large value. DO NOT use 'docker rm/kill'!
 
     * Kubernetes - provide the graceful stop script as the PreStop hook.
 

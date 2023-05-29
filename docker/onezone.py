@@ -421,8 +421,6 @@ def print_new_logs(logs):
 if __name__ == '__main__':
     current_log_level = os.environ.get('ONEPANEL_LOG_LEVEL', 'info').lower()
     try:
-        sp.call(['/root/persistence-dir.py', '--copy-missing-files'])
-
         if os.environ.get(ONEPANEL_OVERRIDE):
             app_config_path = os.path.join(os.environ.get(ONEPANEL_OVERRIDE),
                                            GENERATED_CONFIG_SOURCES_PATH)
