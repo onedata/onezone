@@ -15,6 +15,9 @@ trap on_termination_signal SIGHUP SIGINT SIGTERM
 # make sure the graceful stop marker is not set; see common.sh
 rm -f ${GRACEFUL_STOP_LOCK_FILE}
 
+# must be done before dispatch-log, which writes to a persistent directory
+/root/persistence-dir.py --copy-missing-files
+
 dispatch-log "Main process starting" extra_linebreak_in_log_file
 
 /root/onezone.py &
