@@ -16,6 +16,7 @@ DIRS = [
     '/var/log/oz_panel',
     '/var/log/oz_worker',
     '/var/log/cluster_manager',
+    '/var/log/onezone',
     '/opt/couchbase/var/lib/couchbase'
 ]
 

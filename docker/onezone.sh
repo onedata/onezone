@@ -1,24 +1,24 @@
 #!/bin/bash
 
-function stop_service {
-  echo -e "Stopping ${2:-$1}..."
-  service $1 stop >/dev/null 2>&1
+source /root/internal-scripts/common.sh
+
+# @TODO VFS-10947-make-sure-onezone-oneprovider-entrypoint-is-started-with-pid-1
+
+function on_termination_signal {
+    dispatch-log "Received a termination signal"
+    /root/internal-scripts/onezone-ensure-stopped.sh
+    dispatch-log "Main process exiting"
 }
 
-function stop_onezone {
-  echo -e "\nGracefully stopping onezone...\n"
+trap on_termination_signal SIGHUP SIGINT SIGTERM
 
-  stop_service oz_panel
-  stop_service oz_worker
-  stop_service cluster_manager
-  stop_service couchbase-server couchbase
+# make sure the graceful stop marker is not set; see common.sh
+rm -f ${GRACEFUL_STOP_LOCK_FILE}
 
-  echo -e "\nAll services stopped. Exiting..."
+# must be done before dispatch-log, which writes to a persistent directory
+/root/persistence-dir.py --copy-missing-files
 
-  exit 0
-}
-
-trap stop_onezone SIGHUP SIGINT SIGTERM
+dispatch-log "Main process starting" extra_linebreak_in_log_file
 
 /root/onezone.py &
 wait $!
