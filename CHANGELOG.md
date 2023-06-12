@@ -8,6 +8,9 @@ CHANGELOG
 
 -   **VFS-10889** Web GUI: Added information about unsupported features
     in older Oneproviders version supporting space.
+-   **VFS-10875** Web GUI: Improved handling of large amount of spaces
+    and storages in Oneprovider panel GUI. Added loading progress
+    indicators.
 -   **VFS-10825** Web GUI: Fixed unnecessary scrollbars in Safari.
 -   **VFS-10819** Web GUI: Fixed atm. inventory invite tokens creation
     in tokens page.
