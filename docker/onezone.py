@@ -312,16 +312,26 @@ def unwrap_error_with_hosts(error_obj):
     return error_id, description, details, nodes
 
 
-# Throws on connection nerror
 def wait_for_workers():
     url = 'https://127.0.0.1:9443/api/v3/onepanel/zone/nagios'
-    while not nagios_up(url):
+    retries = 0
+    while not nagios_up(url, retries % 10 == 9):
         time.sleep(1)
+        retries += 1
+        if retries == 120:
+            raise RuntimeError('Timeout waiting for the Onepanel service readiness')
 
 
-def nagios_up(url):
-    r = do_auth_request(requests.get, url, verify=False)
-    if not r.ok:
+def nagios_up(url, log_errors=False):
+    try:
+        r = do_auth_request(requests.get, url, verify=False)
+        if not r.ok:
+            if log_errors:
+                log('Onepanel service is reachable, but nagios is not reporting an OK status - retrying...')
+            return False
+    except Exception:
+        if log_errors:
+            log('Onepanel service is not reachable - retrying...')
         return False
 
     healthdata = eTree.fromstring(r.text)

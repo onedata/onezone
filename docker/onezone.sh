@@ -2,7 +2,14 @@
 
 source /root/internal-scripts/common.sh
 
-# @TODO VFS-10947-make-sure-onezone-oneprovider-entrypoint-is-started-with-pid-1
+if [ $$ -ne 1 ]; then
+	SCRIPT_NAME=$(basename "$0")
+	echo "ERROR: the '$SCRIPT_NAME' script MUST be run as the main container process (PID 1)" \
+	     "to ensure proper handling of termination signals."
+	echo "However, the current PID is $$. If you are calling this script from a custom wrapper," \
+	     "make sure to use the 'exec' command."
+	exit 1
+fi
 
 function on_termination_signal {
     dispatch-log "Received a termination signal"
