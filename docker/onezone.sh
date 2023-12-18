@@ -27,5 +27,13 @@ rm -f ${GRACEFUL_STOP_LOCK_FILE}
 
 dispatch-log "Main process starting" extra_linebreak_in_log_file
 
-/root/onezone.py &
+echo $1 $2 $*
+if [ $1"x" == "demox" ]; then
+    echo Starting demo mode...
+else
+    echo Starting normal mode...
+fi
+
+sleep 10000 &
+#/root/onezone.py &
 wait $!
