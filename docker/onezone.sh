@@ -27,15 +27,6 @@ rm -f ${GRACEFUL_STOP_LOCK_FILE}
 
 dispatch-log "Main process starting" extra_linebreak_in_log_file
 
-if [ $1"x" == "bashx" ]; then
-    /bin/bash  
-elif [ $1"x" == "demox" ]; then
-    echo Starting demo mode...
-    echo Use https://$(hostname -i) to connect to onezone
-    /root/demo.sh &
-else
-    echo Starting normal mode...
-    /root/onezone.py &
+/root/onezone.py &
 
-fi
 wait $!
