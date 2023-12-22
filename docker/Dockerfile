@@ -41,6 +41,7 @@ RUN python3 /root/persistence-dir.py --create-symlinks
 # Add scripts handling service starting and stopping
 ADD onezone.sh /root/onezone.sh
 ADD demo /usr/local/bin/demo
+ADD demo.sh /root/demo.sh
 ADD onezone.py /root/onezone.py
 ADD onezone-stop-graceful.sh /root/onezone-stop-graceful.sh
 ADD internal-scripts/onezone-do-stop.sh /root/internal-scripts/onezone-do-stop.sh
