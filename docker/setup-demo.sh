@@ -48,6 +48,4 @@ cat /tmp/hosts.new > /etc/hosts
 rm /tmp/hosts.new
 echo "127.0.1.1 ${HN}.onezone.local ${HN}" >> /etc/hosts
 
-/root/onezone.py
-
     
