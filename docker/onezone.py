@@ -45,6 +45,8 @@ WRAP_KWARGS = {
     'break_on_hyphens': False
 }
 
+SERVICE_READY_LOCK_FILE = '/root/service-ready.lock'  # used by the "await" script
+
 
 class MissingVariableError(Exception):
     """Indicates operation error caused by missing environment variable"""
@@ -391,24 +393,26 @@ def show_details():
     show_ports(json)
 
 
-def print_logs(log_level, infinitely=True):
-    logs = []
+def print_logs(log_level, starting_log_cursors=None, infinitely=True):
     if log_level in LOG_LEVELS:
         log('\nLogging on \'{0}\' level:'.format(log_level))
-        for log_prefix, log_dir in LOGS:
-            log_file = os.path.join(log_dir, log_level + '.log')
-            logs.append((log_prefix, log_file, None, None))
+        if not starting_log_cursors:
+            starting_log_cursors = []
+            for log_prefix, log_dir in LOGS:
+                log_file = os.path.join(log_dir, log_level + '.log')
+                starting_log_cursors.append((log_prefix, log_file, None, None))
 
-    logs = print_new_logs(logs)
-    while infinitely:
-        logs = print_new_logs(logs)
-        time.sleep(1)
+        new_log_cursors = print_new_logs(starting_log_cursors)
+        while infinitely:
+            new_log_cursors = print_new_logs(new_log_cursors)
+            time.sleep(1)
+        return new_log_cursors
 
 
-def print_new_logs(logs):
+def print_new_logs(log_cursors):
     new_logs = []
 
-    for log_prefix, log_file, log_fd, log_ino in logs:
+    for log_prefix, log_file, log_fd, log_ino in log_cursors:
         try:
             if os.stat(log_file).st_ino != log_ino:
                 if log_fd:
@@ -494,4 +498,7 @@ if __name__ == '__main__':
             log('ERROR: Starting the container failed - see above.')
             sys.exit(1)
 
-    print_logs(current_log_level, infinitely=True)
+    previous_log_cursors = print_logs(current_log_level, infinitely=False)
+    with open(SERVICE_READY_LOCK_FILE, 'w'):
+        pass
+    print_logs(current_log_level, starting_log_cursors=previous_log_cursors, infinitely=True)

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# This file is created by onezone.py when the service is ready
+SERVICE_READY_LOCK_FILE='/root/service-ready.lock'
+
+# Optional first argument
+TIMEOUT=${1:-300}
+
+RETRY_NUM=0
+while [[ ! -f ${SERVICE_READY_LOCK_FILE} ]]; do
+    RETRY_NUM=$((RETRY_NUM + 1))
+
+    if ! ((RETRY_NUM % 15)); then
+        echo -e "\e[1;33m"
+        echo "-------------------------------------------------------------------------"
+        echo "Awaiting Onezone service readiness..."
+        echo "-------------------------------------------------------------------------"
+        echo -e "\e[0m"
+    fi
+
+    if [[ ${RETRY_NUM} -eq ${TIMEOUT} ]]; then
+        echo -e "\e[1;31m"
+        echo "-------------------------------------------------------------------------"
+        echo "ERROR: The Onezone service failed to initialize within ${TIMEOUT} seconds, exiting."
+        echo "-------------------------------------------------------------------------"
+        echo -e "\e[0m"
+        exit 1
+    fi
+
+    sleep 1;
+done
+
+exit 0
