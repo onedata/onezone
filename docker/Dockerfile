@@ -40,14 +40,18 @@ RUN python3 /root/persistence-dir.py --create-symlinks
 
 # Add scripts handling service starting and stopping
 ADD onezone.sh /root/onezone.sh
-ADD demo /usr/local/bin/demo
-ADD await /usr/local/bin/await
-ADD setup-demo.sh /root/setup-demo.sh
 ADD onezone.py /root/onezone.py
 ADD onezone-stop-graceful.sh /root/onezone-stop-graceful.sh
+ADD await /usr/local/bin/await
 ADD internal-scripts/onezone-do-stop.sh /root/internal-scripts/onezone-do-stop.sh
 ADD internal-scripts/onezone-ensure-stopped.sh /root/internal-scripts/onezone-ensure-stopped.sh
 ADD internal-scripts/common.sh /root/internal-scripts/common.sh
+
+# Add scripts related to demo mode
+ADD demo-mode/demo-common.sh /root/demo-mode/demo-common.sh
+ADD demo-mode/demo /usr/local/bin/demo
+ADD demo-mode/demo-access-token /usr/local/bin/demo-access-token
+ADD demo-mode/setup-demo.sh /root/demo-mode/setup-demo.sh
 
 # Disable http_proxy for normal operation
 ENV http_proxy ""
