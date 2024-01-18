@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source /root/demo-mode/demo-common.sh
+
+if ! await &> /dev/null; then
+    exit_and_kill_docker
+fi
+
+success_curl -u admin:password \
+    "https://127.0.0.1/api/v3/onezone/user/tokens/temporary" \
+    -X POST -H 'Content-type: application/json' -d '
+        {
+            "type": {"accessToken": {}},
+            "caveats": [{"type": "time", "validUntil": '$(($(date +%s) + 3600))'}]
+        }' | jq -r .token

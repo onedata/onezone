@@ -1,20 +1,24 @@
 #!/bin/bash
 
+source /root/demo-mode/demo-common.sh
+
+HOSTNAME=$(hostname)
+IP=$(hostname -I | tr -d ' ')
 
 echo -e "\e[1;33m"
 echo "-------------------------------------------------------------------------"
 echo "Starting Onezone in demo mode..."
+echo "The IP address is: $IP"
 echo "When the service is ready, an adequate log will appear here."
 echo "-------------------------------------------------------------------------"
 echo -e "\e[0m"
 
-HN=$(hostname)
 export ONEPANEL_DEBUG_MODE="true" # prevents container exit on configuration error
 export ONEPANEL_BATCH_MODE="true"
 export ONEPANEL_LOG_LEVEL="info" # prints logs to stdout (possible values: none, debug, info, error), by default set to info
 export ONEPANEL_EMERGENCY_PASSPHRASE="password"
 export ONEPANEL_GENERATE_TEST_WEB_CERT="true"  # default: false
-export ONEPANEL_GENERATED_CERT_DOMAIN="onezone.local"  # default: ""
+export ONEPANEL_GENERATED_CERT_DOMAIN="$IP"  # default: ""
 export ONEPANEL_TRUST_TEST_CA="true"  # default: false
 
 export ONEZONE_CONFIG=$(cat <<EOF
@@ -22,7 +26,7 @@ export ONEZONE_CONFIG=$(cat <<EOF
           domainName: "onezone.local"
           nodes:
             n1:
-              hostname: "${HN}"
+              hostname: "${HOSTNAME}"
           managers:
             mainNode: "n1"
             nodes:
@@ -34,16 +38,16 @@ export ONEZONE_CONFIG=$(cat <<EOF
             nodes:
               - "n1"
         onezone:
-          name: "${HN}"
-          domainName: "onezone.local"
+          name: "Demo Onezone"
+          domainName: "$IP"
           letsEncryptEnabled: false
 EOF
 )
 
-sed "s/${HN}\$/${HN}-node.onezone.local ${HN}-node/g" /etc/hosts > /tmp/hosts.new
+sed "s/${HOSTNAME}\$/${HOSTNAME}-node.onezone.local ${HOSTNAME}-node/g" /etc/hosts > /tmp/hosts.new
 cat /tmp/hosts.new > /etc/hosts
 rm /tmp/hosts.new
-echo "127.0.1.1 ${HN}.onezone.local ${HN}" >> /etc/hosts
+echo "127.0.1.1 ${HOSTNAME}.onezone.local ${HOSTNAME}" >> /etc/hosts
 
 cat << EOF > /etc/oz_worker/config.d/disable-gui-verification.config
 [
@@ -58,11 +62,9 @@ EOF
 # Run an async process to await service readiness
 {
     if ! await; then
-        kill -9 "$(pgrep -f /root/onezone.py)"
-        exit 1
+        exit_and_kill_docker
     fi
 
-    IP=$(hostname -I | tr -d ' ')
     echo -e "\e[1;32m"
     echo "-------------------------------------------------------------------------"
     echo "Onezone service is ready!"
