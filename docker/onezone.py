@@ -540,7 +540,7 @@ if __name__ == '__main__':
                         'Please set it to your desired Onepanel emergency passphrase.\n'
                         .format(EMERGENCY_PASSPHRASE_VARIABLE))
 
-        # show_details()  TODO: currently not working correctly (all details are null)
+        # show_details()  NOTE: currently not working correctly (all details are null)
     except Exception as e:
         log('\nERROR: {0}'.format(e))
         if os.environ.get('ONEPANEL_DEBUG_MODE', 'false').lower() == 'true':
