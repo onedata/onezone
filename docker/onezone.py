@@ -411,13 +411,16 @@ def show_details():
 
 
 def print_logs(log_level, starting_log_cursors=None, infinitely=True):
-    if log_level in LOG_LEVELS:
-        log('\nLogging on \'{0}\' level:'.format(log_level))
-        if not starting_log_cursors:
-            starting_log_cursors = []
+    # first run of the function
+    if not isinstance(starting_log_cursors, list):
+        starting_log_cursors = []
+        if log_level in LOG_LEVELS:
+            log('\nLogging on \'{0}\' level:'.format(log_level))
             for log_prefix, log_dir in LOGS:
                 log_file = os.path.join(log_dir, log_level + '.log')
                 starting_log_cursors.append((log_prefix, log_file, None, None))
+        else:
+            log('\nLogging to stdout disabled (log level = {})'.format(log_level))
 
     new_log_cursors = print_new_logs(starting_log_cursors)
     while infinitely:
@@ -537,7 +540,7 @@ if __name__ == '__main__':
                         'Please set it to your desired Onepanel emergency passphrase.\n'
                         .format(EMERGENCY_PASSPHRASE_VARIABLE))
 
-        show_details()
+        # show_details()  TODO: currently not working correctly (all details are null)
     except Exception as e:
         log('\nERROR: {0}'.format(e))
         if os.environ.get('ONEPANEL_DEBUG_MODE', 'false').lower() == 'true':
