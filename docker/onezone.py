@@ -419,11 +419,11 @@ def print_logs(log_level, starting_log_cursors=None, infinitely=True):
                 log_file = os.path.join(log_dir, log_level + '.log')
                 starting_log_cursors.append((log_prefix, log_file, None, None))
 
-        new_log_cursors = print_new_logs(starting_log_cursors)
-        while infinitely:
-            new_log_cursors = print_new_logs(new_log_cursors)
-            time.sleep(1)
-        return new_log_cursors
+    new_log_cursors = print_new_logs(starting_log_cursors)
+    while infinitely:
+        new_log_cursors = print_new_logs(new_log_cursors)
+        time.sleep(1)
+    return new_log_cursors
 
 
 def print_new_logs(log_cursors):
