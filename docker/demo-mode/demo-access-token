@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source /root/demo-mode/demo-common.sh
+source /root/demo-mode/better-curl.sh
 
 if ! await &> /dev/null; then
     exit_and_kill_docker

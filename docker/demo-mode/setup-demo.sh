@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source /root/demo-mode/demo-common.sh
+source /root/demo-mode/better-curl.sh
 
 HOSTNAME=$(hostname)
 IP=$(hostname -I | tr -d ' ')

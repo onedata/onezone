@@ -48,10 +48,11 @@ ADD internal-scripts/onezone-ensure-stopped.sh /root/internal-scripts/onezone-en
 ADD internal-scripts/common.sh /root/internal-scripts/common.sh
 
 # Add scripts related to demo mode
-ADD demo-mode/demo-common.sh /root/demo-mode/demo-common.sh
-ADD demo-mode/demo /usr/local/bin/demo
+ADD demo-mode/better-curl.sh    /root/demo-mode/better-curl.sh
+ADD demo-mode/demo              /usr/local/bin/demo
 ADD demo-mode/demo-access-token /usr/local/bin/demo-access-token
-ADD demo-mode/setup-demo.sh /root/demo-mode/setup-demo.sh
+ADD demo-mode/demo-common.sh    /root/demo-mode/demo-common.sh
+ADD demo-mode/setup-demo.sh     /root/demo-mode/setup-demo.sh
 
 # Disable http_proxy for normal operation
 ENV http_proxy ""
