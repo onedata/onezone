@@ -18,7 +18,7 @@ source /root/demo-mode/demo-common.sh
 COMMON_TMP_DIR=/tmp/curl-calls
 
 __make_temp_dir() {
-    TEMP_DIR_NAME="$(date '+%H:%M:%S')-$(uuidgen | cut -d "-" -f5)"
+    TEMP_DIR_NAME="$(date '+%H:%M:%S')-$(echo $RANDOM | md5sum | head -c 10)"
     TMP_DIR_PATH="${COMMON_TMP_DIR}/${TEMP_DIR_NAME}"
     mkdir -p "${TMP_DIR_PATH}"
     echo "${TMP_DIR_PATH}"
