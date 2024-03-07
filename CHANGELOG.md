@@ -4,6 +4,18 @@ Release notes for project onezone-pkg
 CHANGELOG
 ---------
 
+### 21.02.4
+
+-   **VFS-11459** Added option to set custom region in S3 storage
+    helper.
+-   **VFS-11210** Fixed a bug with S3 storage backend config
+    modification, causing wrong validation of the endpoint.
+-   **VFS-10999** Added the public "infer access token scope" endpoint,
+    which analyses the provided access token to infer the scope of data
+    access the token can be used for.
+-   **VFS-10649** Web GUI: added complex charts dashboard editor to the
+    automation GUI.
+
 ### 21.02.3
 
 -   **VFS-11231** Refactored oneclient connection pool to improve
