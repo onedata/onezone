@@ -61,6 +61,8 @@ cat << EOF > /etc/oz_worker/config.d/disable-gui-verification.config
 ].
 EOF
 
+# After the main process finishes here, the Onezone entrypoint is run.
+
 # Run an async process to await service readiness
 {
     if ! await; then
