@@ -37,6 +37,9 @@ export ONEZONE_CONFIG=$(cat <<EOF
             nodes:
               - "n1"
           databases:
+            # set the lowest possible ram quota for couchbase for a lightweight deployment
+            serverQuota: 256  # per-node Couchbase cache size in MB for all buckets
+            bucketQuota: 256  # per-bucket Couchbase cache size in MB across the cluster
             nodes:
               - "n1"
         onezone:
