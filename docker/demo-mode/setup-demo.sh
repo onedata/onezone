@@ -15,6 +15,39 @@ echo "You may also use the await script: \"docker exec \$CONTAINER_ID await\"."
 echo "-------------------------------------------------------------------------"
 echo -e "\e[0m"
 
+sed "s/${HOSTNAME}\$/${HOSTNAME}-node.onezone.local ${HOSTNAME}-node/g" /etc/hosts > /tmp/hosts.new
+cat /tmp/hosts.new > /etc/hosts
+rm /tmp/hosts.new
+echo "127.0.1.1 ${HOSTNAME}.onezone.local ${HOSTNAME}" >> /etc/hosts
+
+# A simple heuristic to check if the DNS setup in the current docker runtime is
+# acceptable; there is a known issue: if DNS lookups about the machine's FQDN
+# take too long (or time out), couchbase will take ages to start.
+START_TIME_NANOS=$(date +%s%N)
+timeout 2 nslookup "$(hostname -f)" > /dev/null
+LOOKUP_TIME_MILLIS=$((($(date +%s%N) - START_TIME_NANOS) / 1000000))
+if [ "$LOOKUP_TIME_MILLIS" -gt 1000 ]; then
+    echo "-------------------------------------------------------------------------"
+    echo "The DNS config in your docker runtime may cause problems with the Couchbase DB startup"
+    echo "since queries about the container's FQDN take too long."
+    echo ""
+    echo "Overriding the container's resolv.conf with 8.8.8.8 to avoid that."
+    echo "-------------------------------------------------------------------------"
+    echo ""
+    echo "8.8.8.8" > /etc/resolv.conf
+fi
+
+cat << EOF > /etc/oz_worker/config.d/disable-gui-verification.config
+[
+    {oz_worker, [
+        % verification is not relevant in demo deployments, and turning it off allows deploying
+        % any Oneprovider version (especially not an official release) alongside Onezone
+        {gui_package_verification, false}
+    ]}
+].
+EOF
+
+# Onezone batch installation config
 export ONEPANEL_DEBUG_MODE="true" # prevents container exit on configuration error
 export ONEPANEL_BATCH_MODE="true"
 export ONEPANEL_LOG_LEVEL="info" # prints logs to stdout (possible values: none, debug, info, error), by default set to info
@@ -48,21 +81,6 @@ export ONEZONE_CONFIG=$(cat <<EOF
           letsEncryptEnabled: false
 EOF
 )
-
-sed "s/${HOSTNAME}\$/${HOSTNAME}-node.onezone.local ${HOSTNAME}-node/g" /etc/hosts > /tmp/hosts.new
-cat /tmp/hosts.new > /etc/hosts
-rm /tmp/hosts.new
-echo "127.0.1.1 ${HOSTNAME}.onezone.local ${HOSTNAME}" >> /etc/hosts
-
-cat << EOF > /etc/oz_worker/config.d/disable-gui-verification.config
-[
-    {oz_worker, [
-        % verification is not relevant in demo deployments, and turning it off allows deploying
-        % any Oneprovider version (especially not an official release) alongside Onezone
-        {gui_package_verification, false}
-    ]}
-].
-EOF
 
 # After the main process finishes here, the Onezone entrypoint is run.
 
