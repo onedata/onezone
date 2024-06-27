@@ -5,8 +5,8 @@ DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-9"
-DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-9"
+PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2202-1"
+DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2202-1"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 RETRIES                 ?= 0
 RETRY_SLEEP             ?= 300
@@ -15,7 +15,7 @@ ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always --abbrev=7)
 endif
 ifeq ($(strip $(COUCHBASE_VERSION)),)
-COUCHBASE_VERSION       := 4.5.1-2844
+COUCHBASE_VERSION       := 5.1.1-5723
 endif
 ifeq ($(strip $(CLUSTER_MANAGER_VERSION)),)
 CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always --abbrev=7)
@@ -33,7 +33,7 @@ OZ_WORKER_VERSION       := $(shell echo ${OZ_WORKER_VERSION} | tr - .)
 OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
-PKG_BUILDER_VERSION     ?= -4
+PKG_BUILDER_VERSION     ?= -1
 
 .PHONY: docker docker-dev package.tar.gz
 
