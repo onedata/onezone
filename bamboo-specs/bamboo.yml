@@ -302,7 +302,6 @@ Publish packages:
     required: false
   requirements:
   - publish_packages
-  - onedata-quick
   artifact-subscriptions:
   - artifact: centos7.tar.gz
   - artifact: focal.tar.gz
