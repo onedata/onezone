@@ -12,7 +12,8 @@ stages:
     jobs:
     - Codetag Tracker
     - Build onezone Focal
-    - Build onezone CentOS 7
+    # Until we get convinienced that centos7 will never be needed let's keep it commented
+    # - Build onezone CentOS 7
 - Test:
     description: Test created packages
     manual: false
@@ -128,73 +129,73 @@ Build onezone Focal:
   - onedata
   - onedata-pkg-builder
   artifact-subscriptions: []
-Build onezone CentOS 7:
-  key: RPM
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
-  tasks:
-  - checkout:
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
+# Build onezone CentOS 7:
+#   key: RPM
+#   other:
+#     clean-working-dir: true
+#     all-other-apps:
+#       custom:
+#         auto: {}
+#         clover:
+#           useLocalLicenseKey: 'true'
+#         buildHangingConfig.enabled: 'false'
+#   tasks:
+#   - checkout:
+#       force-clean-build: 'true'
+#       description: Checkout Default Repository
+#   - script:
+#       interpreter: BINSH_OR_CMDEXE
+#       scripts:
+#       - |-
+#         git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+#         git remote -v
 
-        # initialize submodules to get default packages versions
-        make submodules
+#         # initialize submodules to get default packages versions
+#         make submodules
 
-        DISTRIBUTION=centos-7-x86_64 \
-        ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
-        CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
-        OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
-        OZ_PANEL_VERSION=$bamboo_OZ_PANEL_VERSION \
-        RETRIES=3 \
-        make rpm
-      description: Build
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - tar -chzf centos7.tar.gz package
-      description: Package
-  final-tasks:
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  artifacts:
-  - name: centos7.tar.gz
-    pattern: centos7.tar.gz
-    shared: true
-    required: false
-  - name: oz-worker-build.log
-    location: oz_worker/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: oz-panel-build.log
-    location: ./onepanel/package/packages/
-    pattern: build.log
-    shared: false
-    required: false
-  - name: cluster_manager-build.log
-    location: cluster_manager/package/packages
-    pattern: build.log
-    shared: false
-    required: false
-  requirements:
-  - system.docker.executable
-  - onedata
-  artifact-subscriptions: []
+#         DISTRIBUTION=centos-7-x86_64 \
+#         ONEZONE_VERSION=$bamboo_ONEZONE_VERSION \
+#         CLUSTER_MANAGER_VERSION=$bamboo_CLUSTER_MANAGER_VERSION \
+#         OZ_WORKER_VERSION=$bamboo_OZ_WORKER_VERSION \
+#         OZ_PANEL_VERSION=$bamboo_OZ_PANEL_VERSION \
+#         RETRIES=3 \
+#         make rpm
+#       description: Build
+#   - script:
+#       interpreter: BINSH_OR_CMDEXE
+#       scripts:
+#       - tar -chzf centos7.tar.gz package
+#       description: Package
+#   final-tasks:
+#   - script:
+#       interpreter: BINSH_OR_CMDEXE
+#       scripts:
+#       - curl ${bamboo.OnedataFinalTasksURL} | bash -
+#       description: Clear env
+#   artifacts:
+#   - name: centos7.tar.gz
+#     pattern: centos7.tar.gz
+#     shared: true
+#     required: false
+#   - name: oz-worker-build.log
+#     location: oz_worker/package/packages/
+#     pattern: build.log
+#     shared: false
+#     required: false
+#   - name: oz-panel-build.log
+#     location: ./onepanel/package/packages/
+#     pattern: build.log
+#     shared: false
+#     required: false
+#   - name: cluster_manager-build.log
+#     location: cluster_manager/package/packages
+#     pattern: build.log
+#     shared: false
+#     required: false
+#   requirements:
+#   - system.docker.executable
+#   - onedata
+#   artifact-subscriptions: []
 Test packages:
   key: TEST
   description: Test created packages
@@ -215,7 +216,7 @@ Test packages:
       scripts:
       - |-
         tar -xzf focal.tar.gz
-        tar -xzf centos7.tar.gz
+        # tar -xzf centos7.tar.gz
       description: Unpack package artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
@@ -241,7 +242,7 @@ Test packages:
   requirements:
   - onedata
   artifact-subscriptions:
-  - artifact: centos7.tar.gz
+  # - artifact: centos7.tar.gz
   - artifact: focal.tar.gz
 Publish packages:
   key: PP
@@ -271,8 +272,8 @@ Publish packages:
         # If not publish to legacy repositories
         if test -f RELEASE; then
             RELEASE=$(cat RELEASE)
-            ./pkg.py --host docker_packages_devel --release $RELEASE push centos7.tar.gz
-            mv pkg-list.json centos7-pkg-list.json
+            # ./pkg.py --host docker_packages_devel --release $RELEASE push centos7.tar.gz
+            # mv pkg-list.json centos7-pkg-list.json
             if [ $RELEASE -ge 1902 ]; then
                 # Focal is not supported on 1802
                 ./pkg.py --host docker_packages_devel --release $RELEASE push focal.tar.gz
@@ -281,8 +282,8 @@ Publish packages:
         else
             ./pkg.py --host docker_packages_devel push xenial.tar.gz
             mv pkg-list.json xenial-pkg-list.json
-            ./pkg.py --host docker_packages_devel push centos7.tar.gz
-            mv pkg-list.json centos7-pkg-list.json
+            # ./pkg.py --host docker_packages_devel push centos7.tar.gz
+            # mv pkg-list.json centos7-pkg-list.json
         fi
       description: Publish
   final-tasks:
@@ -292,10 +293,10 @@ Publish packages:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       description: Clear env
   artifacts:
-  - name: centos7-pkg-list.json
-    pattern: centos7-pkg-list.json
-    shared: true
-    required: true
+  # - name: centos7-pkg-list.json
+  #   pattern: centos7-pkg-list.json
+  #   shared: true
+  #   required: true
   - name: focal-pkg-list.json
     pattern: focal-pkg-list.json
     shared: true
@@ -303,7 +304,7 @@ Publish packages:
   requirements:
   - publish_packages
   artifact-subscriptions:
-  - artifact: centos7.tar.gz
+  # - artifact: centos7.tar.gz
   - artifact: focal.tar.gz
 Publish dockers:
   key: PD
