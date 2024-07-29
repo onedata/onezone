@@ -3,6 +3,8 @@
 source /root/demo-mode/demo-common.sh
 source /root/demo-mode/better-curl.sh
 
+ONEZONE_DOMAIN="onezone.internal"  # do not use .local as it messes with some DNS setups
+
 HOSTNAME=$(hostname)
 IP=$(hostname -I | tr -d ' ')
 
@@ -15,10 +17,10 @@ echo "You may also use the await script: \"docker exec \$CONTAINER_ID await\"."
 echo "-------------------------------------------------------------------------"
 echo -e "\e[0m"
 
-sed "s/${HOSTNAME}\$/${HOSTNAME}-node.onezone.local ${HOSTNAME}-node/g" /etc/hosts > /tmp/hosts.new
+sed "s/${HOSTNAME}\$/${HOSTNAME}-node.${ONEZONE_DOMAIN} ${HOSTNAME}-node/g" /etc/hosts > /tmp/hosts.new
 cat /tmp/hosts.new > /etc/hosts
 rm /tmp/hosts.new
-echo "127.0.1.1 ${HOSTNAME}.onezone.local ${HOSTNAME}" >> /etc/hosts
+echo "127.0.1.1 ${HOSTNAME}.${ONEZONE_DOMAIN} ${HOSTNAME}" >> /etc/hosts
 
 # A simple heuristic to check if the DNS setup in the current docker runtime is
 # acceptable; there is a known issue: if DNS lookups about the machine's FQDN
@@ -58,7 +60,7 @@ export ONEPANEL_TRUST_TEST_CA="true"  # default: false
 
 export ONEZONE_CONFIG=$(cat <<EOF
         cluster:
-          domainName: "onezone.local"
+          domainName: "${ONEZONE_DOMAIN}"
           nodes:
             n1:
               hostname: "${HOSTNAME}"
