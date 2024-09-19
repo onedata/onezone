@@ -5,8 +5,8 @@ DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2202-1"
-DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2202-1"
+PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2202-2"
+DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2202-2"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 RETRIES                 ?= 0
 RETRY_SLEEP             ?= 300
@@ -15,7 +15,7 @@ ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always --abbrev=7)
 endif
 ifeq ($(strip $(COUCHBASE_VERSION)),)
-COUCHBASE_VERSION       := 5.1.1-5723
+COUCHBASE_VERSION       := 6.6.0-7909
 endif
 ifeq ($(strip $(CLUSTER_MANAGER_VERSION)),)
 CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always --abbrev=7)

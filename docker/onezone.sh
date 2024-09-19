@@ -31,6 +31,14 @@ if [ $1"x" == "demox" ]; then
     source /root/demo-mode/setup-demo.sh
 fi
 
+if ! /root/couchbase-upgrade.sh; then
+    echo "========= Couchbase upgrade failed ========"
+    echo "Run `docker exec -it <container_id> bash` and look at the logs"
+    echo "Sleeping for 100 hours before exiting to allow debugging..."
+    sleep 360000
+    exit 1
+fi
+
 /root/onezone.py &
 
 wait $!
