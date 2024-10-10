@@ -27,16 +27,17 @@ rm -f ${GRACEFUL_STOP_LOCK_FILE}
 
 dispatch-log "Main process starting" extra_linebreak_in_log_file
 
-if [ $1"x" == "demox" ]; then
-    source /root/demo-mode/setup-demo.sh
-fi
-
 if ! /root/couchbase-upgrade.sh; then
     echo "========= Couchbase upgrade failed ========"
     echo "Run `docker exec -it <container_id> bash` and look at the logs"
+    echo "in /opt/couchbase/var/lib/couchbase/logs"
     echo "Sleeping for 100 hours before exiting to allow debugging..."
     sleep 360000
     exit 1
+fi
+
+if [ $1"x" == "demox" ]; then
+    source /root/demo-mode/setup-demo.sh
 fi
 
 /root/onezone.py &

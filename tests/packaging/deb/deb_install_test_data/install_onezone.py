@@ -27,25 +27,13 @@ oz_worker_package = \
 onezone_package = [path for path in packages if path.decode().startswith('onezone')
                                                 and (dist in path)][0].decode()
 
-# get couchbase
-# check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/xenial/pool/' \
-#                     'main/c/couchbase-server-community/couchbase-' \
-#                     'server-community_4.5.1-ubuntu14.04_amd64.deb'])
-
-# check_call(['wget', 'http://packages.onedata.org/apt/ubuntu/2102/pool/main/o/openssl1.0'
-#                     '/libssl1.0.0_1.0.2n-1ubuntu5~focal_amd64.deb'])
-
 # install packages
-# check_call(['sh', '-c', 'apt install -f -y '
-#                         './libssl1.0.0_1.0.2n-1ubuntu5~focal_amd64.deb'], stderr=STDOUT)
-# check_call(['sh', '-c', 'dpkg -i couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb;'
-#                         'apt-get -f -y install'], stderr=STDOUT)
 check_call(['sh', '-c', 'INSTALL_DONT_START_SERVER=1 DEBIAN_FRONTEND=noninteractive apt install -f -y '
-            'couchbase-server-community'
+            'couchbase-server-community=6.6.0-7909-1'
             ], stderr=STDOUT)
-check_call(['cp', '/root/data/couchbase-server', '/etc/init.d/couchbase-server'])
-check_call(['cp', '/root/data/couchbase_init.d', '/opt/couchbase/etc/couchbase_init.d'])
-check_call(['chown', 'couchbase:couchbase', '/opt/couchbase/etc/couchbase_init.d'])
+check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -f -y '
+            'couchbase-onedata-addons'
+            ], stderr=STDOUT)
 
 check_call(['sh', '-c', 'DEBIAN_FRONTEND=noninteractive apt install -y '
                         'python2 python-is-python2'], stderr=STDOUT)
