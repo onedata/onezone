@@ -1,5 +1,6 @@
 # distro for package building (oneof: xenial, bionic, centos-7-x86_64)
 RELEASE                 ?= $(shell cat ./RELEASE)
+ESL_ERLANG_VERSION	?= 1:26.2.1-1
 DISTRIBUTION            ?= none
 DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
@@ -34,7 +35,6 @@ OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
 PKG_BUILDER_VERSION     ?= -1
-ESL_ERLANG_VERSION	?= 26.2.1
 
 .PHONY: docker docker-dev package.tar.gz
 
