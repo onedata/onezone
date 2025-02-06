@@ -1,12 +1,13 @@
 # distro for package building (oneof: xenial, bionic, centos-7-x86_64)
 RELEASE                 ?= $(shell cat ./RELEASE)
+ESL_ERLANG_VERSION	?= 1:26.2.1-1
 DISTRIBUTION            ?= none
 DOCKER_RELEASE          ?= development
 DOCKER_REG_NAME         ?= "docker.onedata.org"
 DOCKER_REG_USER         ?= ""
 DOCKER_REG_PASSWORD     ?= ""
-PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2102-9"
-DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2102-9"
+PROD_RELEASE_BASE_IMAGE ?= "onedata/onezone-common:2202-2"
+DEV_RELEASE_BASE_IMAGE  ?= "onedata/onezone-dev-common:2202-2"
 HTTP_PROXY              ?= "http://proxy.devel.onedata.org:3128"
 RETRIES                 ?= 0
 RETRY_SLEEP             ?= 300
@@ -15,7 +16,7 @@ ifeq ($(strip $(ONEZONE_VERSION)),)
 ONEZONE_VERSION         := $(shell git describe --tags --always --abbrev=7)
 endif
 ifeq ($(strip $(COUCHBASE_VERSION)),)
-COUCHBASE_VERSION       := 4.5.1-2844
+COUCHBASE_VERSION       := 6.6.0-7909
 endif
 ifeq ($(strip $(CLUSTER_MANAGER_VERSION)),)
 CLUSTER_MANAGER_VERSION := $(shell git -C cluster_manager describe --tags --always --abbrev=7)
@@ -33,7 +34,7 @@ OZ_WORKER_VERSION       := $(shell echo ${OZ_WORKER_VERSION} | tr - .)
 OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
-PKG_BUILDER_VERSION     ?= -4
+PKG_BUILDER_VERSION     ?= -1
 
 .PHONY: docker docker-dev package.tar.gz
 
@@ -49,7 +50,7 @@ retry = RETRIES=$(RETRIES); until $(1) && return 0 || [ $$RETRIES -eq 0 ]; do sl
 make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
 mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 	mv $(1)/package/packages/*.x86_64.rpm package/$(DISTRIBUTION)/x86_64
-make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --grant-sudo-rights --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
+make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) -e ESL_ERLANG_VERSION=$(ESL_ERLANG_VERSION) --privileged --grant-sudo-rights --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
 mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.diff.gz package/$(DISTRIBUTION)/source | true && \
