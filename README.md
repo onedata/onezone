@@ -31,6 +31,24 @@ make
 The building is done in docker containers. The builders docker images are available at [Docker Hub](https://hub.docker.com/u/onedata/). 
 The build process itself is fully based on Docker containers, so no other prerequisites other than Docker should be necessary. In case of problems with Docker cache, please set `NO_CACHE=1` environment variable.
 
+## Running Onezone in demo mode
+
+Without persistence:
+```bash
+docker run -it --rm --name oz onedata/onezone:21.02.9 demo
+```
+
+With persistence:
+```bash
+docker run -it --rm --name oz -h oz -v /tmp/oz-pers:/volumes/persistence onedata/onezone:21.02.9 demo
+```
+Notes:
+* Demo mode with persistence requires version `>= 21.02.9`.
+* Hostname must be set to the same value between consecutive runs 
+  (e.g. `-h oz`, like above).
+* The persistence directory mounted from the host must be the same between 
+  consecutive runs (`/tmp/oz-pers` in above example).
+
 ## Support
 
 Please use [GitHub issues](https://github.com/onedata/onedata/issues) mechanism as the main channel for reporting bugs and requesting support or new features.
