@@ -12,7 +12,7 @@ echo -e "\e[1;33m"
 echo "-------------------------------------------------------------------------"
 echo "Starting Onezone in demo mode..."
 echo "The IP address is: $IP"
-echo "When the service is ready, an adequate log will appear here."
+echo "When the service is ready, an adequate log will appear."
 echo "You may also use the await script: \"docker exec \$CONTAINER_ID await\"."
 echo "-------------------------------------------------------------------------"
 echo -e "\e[0m"
@@ -39,26 +39,39 @@ if [ "$LOOKUP_TIME_MILLIS" -gt 1000 ]; then
     echo "8.8.8.8" > /etc/resolv.conf
 fi
 
-cat << EOF > /etc/oz_worker/config.d/disable-gui-verification.config
-[
-    {oz_worker, [
-        % verification is not relevant in demo deployments, and turning it off allows deploying
-        % any Oneprovider version (especially not an official release) alongside Onezone
-        {gui_package_verification, false}
-    ]}
-].
+if [ -d /opt/couchbase/var/lib/couchbase/data/onedata ]; then
+    echo -e "\e[1;33m"
+    echo "-------------------------------------------------------------------------"
+    echo "Detected persistence files from a previous run."
+    echo "Assuming that the zone is already set up and resuming the cluster."
+    echo "In case of problems, consider clearing the persistence volume and "
+    echo "re-running for a fresh deployment."
+    echo "-------------------------------------------------------------------------"
+    echo -e "\e[0m"
+
+    export ONEPANEL_BATCH_MODE="true"
+    export ONEPANEL_EMERGENCY_PASSPHRASE="password"
+else
+    cat << EOF > /etc/oz_worker/config.d/disable-gui-verification.config
+    [
+        {oz_worker, [
+            % verification is not relevant in demo deployments, and turning it off allows deploying
+            % any Oneprovider version (especially not an official release) alongside Onezone
+            {gui_package_verification, false}
+        ]}
+    ].
 EOF
 
-# Onezone batch installation config
-export ONEPANEL_DEBUG_MODE="true" # prevents container exit on configuration error
-export ONEPANEL_BATCH_MODE="true"
-export ONEPANEL_LOG_LEVEL="info" # prints logs to stdout (possible values: none, debug, info, error), by default set to info
-export ONEPANEL_EMERGENCY_PASSPHRASE="password"
-export ONEPANEL_GENERATE_TEST_WEB_CERT="true"  # default: false
-export ONEPANEL_GENERATED_CERT_DOMAIN="$IP"  # default: ""
-export ONEPANEL_TRUST_TEST_CA="true"  # default: false
+    # Onezone batch installation config
+    export ONEPANEL_DEBUG_MODE="true" # prevents container exit on configuration error
+    export ONEPANEL_BATCH_MODE="true"
+    export ONEPANEL_LOG_LEVEL="info" # prints logs to stdout (possible values: none, debug, info, error), by default set to info
+    export ONEPANEL_EMERGENCY_PASSPHRASE="password"
+    export ONEPANEL_GENERATE_TEST_WEB_CERT="true"  # default: false
+    export ONEPANEL_GENERATED_CERT_DOMAIN="$IP"  # default: ""
+    export ONEPANEL_TRUST_TEST_CA="true"  # default: false
 
-export ONEZONE_CONFIG=$(cat <<EOF
+    export ONEZONE_CONFIG=$(cat <<EOF
         cluster:
           domainName: "${ONEZONE_DOMAIN}"
           nodes:
@@ -83,6 +96,7 @@ export ONEZONE_CONFIG=$(cat <<EOF
           letsEncryptEnabled: false
 EOF
 )
+    fi
 
 # After the main process finishes here, the Onezone entrypoint is run.
 
