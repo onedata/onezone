@@ -403,10 +403,6 @@ dependencies:
   block-strategy: none
   plans:
     - ODSRV-K8SD
-    - ODSRV-MAOPT
-    - ODSRV-UP
-    - ODSRV-OAP
-    - ODSRV-GAPT
 other:
   concurrent-build-plugin: system-default
   all-other-apps:
