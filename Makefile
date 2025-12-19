@@ -33,7 +33,7 @@ OZ_WORKER_VERSION       := $(shell echo ${OZ_WORKER_VERSION} | tr - .)
 OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
-PKG_BUILDER_VERSION     ?= -4
+PKG_BUILDER_VERSION     ?= 2102-4
 
 .PHONY: docker docker-dev package.tar.gz
 
@@ -46,10 +46,10 @@ all: build
 make = $(1)/make.py -s $(1) -r .
 clean = $(call make, $(1)) clean
 retry = RETRIES=$(RETRIES); until $(1) && return 0 || [ $$RETRIES -eq 0 ]; do sleep $(RETRY_SLEEP); RETRIES=`expr $$RETRIES - 1`; echo "===== Cleaning up... ====="; $(if $2,$2,:); echo "\n\n\n===== Retrying build... ====="; done; return 1 
-make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
+make_rpm = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --group mock -i onedata/rpm_builder:$(DISTRIBUTION)-$(PKG_BUILDER_VERSION) $(2)
 mv_rpm = mv $(1)/package/packages/*.src.rpm package/$(DISTRIBUTION)/SRPMS && \
 	mv $(1)/package/packages/*.x86_64.rpm package/$(DISTRIBUTION)/x86_64
-make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --grant-sudo-rights --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) $(2)
+make_deb = $(call make, $(1)) -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) --privileged --grant-sudo-rights --group sbuild -i onedata/deb_builder:$(DISTRIBUTION)-$(PKG_BUILDER_VERSION) $(2)
 mv_deb = mv $(1)/package/packages/*.tar.gz package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.dsc package/$(DISTRIBUTION)/source | true && \
 	mv $(1)/package/packages/*.diff.gz package/$(DISTRIBUTION)/source | true && \
@@ -149,13 +149,13 @@ rpm: rpm_onepanel rpm_oz_worker rpm_cluster_manager
 	sed -i 's/{{oz_worker_version}}/$(OZ_WORKER_VERSION)/g' onezone_meta/onezone.spec
 	sed -i 's/{{oz_panel_version}}/$(OZ_PANEL_VERSION)/g' onezone_meta/onezone.spec
 
-	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
+	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(PKG_BUILDER_VERSION) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --buildsrpm --spec onezone_meta/onezone.spec \
 	        --sources onezone_meta --root $(DISTRIBUTION) \
 	        --resultdir onezone_meta/package/packages)
 
-	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(RELEASE)$(PKG_BUILDER_VERSION) \
+	$(call retry, bamboos/docker/make.py -i onedata/rpm_builder:$(DISTRIBUTION)-$(PKG_BUILDER_VERSION) \
 		    -e DISTRIBUTION=$(DISTRIBUTION) -e RELEASE=$(RELEASE) \
 		    --privileged --group mock -c mock --rebuild onezone_meta/package/packages/*.src.rpm \
 	        --root $(DISTRIBUTION) --resultdir onezone_meta/package/packages)

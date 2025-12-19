@@ -35,15 +35,15 @@ The build process itself is fully based on Docker containers, so no other prereq
 
 Without persistence:
 ```bash
-docker run -it --rm --name oz onedata/onezone:21.02.9 demo
+docker run -it --rm --name oz onedata/onezone:25.0 demo
 ```
 
 With persistence:
 ```bash
-docker run -it --rm --name oz -h oz -v /tmp/oz-pers:/volumes/persistence onedata/onezone:21.02.9 demo
+docker run -it --rm --name oz -h oz -v /tmp/oz-pers:/volumes/persistence onedata/onezone:25.0 demo
 ```
 Notes:
-* Demo mode with persistence requires version `>= 21.02.9`.
+* Demo mode with persistence requires version `>= 25.0`.
 * Hostname must be set to the same value between consecutive runs 
   (e.g. `-h oz`, like above).
 * The persistence directory mounted from the host must be the same between 

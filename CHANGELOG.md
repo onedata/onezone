@@ -1,6 +1,107 @@
-# Release notes for project onezone-pkg
+Release notes for project onezone-pkg
+=====================================
 
-## CHANGELOG
+CHANGELOG
+---------
+
+### 25.0
+
+-   **VFS-13222** Switched to the Calendar Versioning model. Version
+    25.0 is equivalent to 21.02.9 in the previous model, and it's
+    cross-compatible with the 21.02 line.
+-   **VFS-13188** Added support for OpenAIRE metadata format in public
+    data records, including APIs and the OAI-PMH endpoint for
+    "oai\_openaire" metadata prefix.
+-   **VFS-13153** Web GUI: Fixed random lack of login methods on custom
+    login page.
+-   **VFS-13104** Web GUI: Improved loading feedback on the Members
+    views for large number of membership paths.
+-   **VFS-13021** Web GUI: Added support for setting custom port for
+    OneS3 service on cluster deployment or adding first OneS3 service.
+-   **VFS-12985** Web GUI: Fixed crashed shares sidebar loader when user
+    does not have view privileges for some space.
+-   **VFS-12984** Web GUI: Optimized time of removing and leaving
+    spaces/groups when there is a large number of spaces/groups.
+-   **VFS-12982** Web GUI: Fixed lack of privileges to view parents and
+    children after adding a parent or child to group on the hierarchy
+    view. Minor groups hierarchy view fixes.
+-   **VFS-12935** Disabled SSL/TLS ciphers that have been recently
+    deemed unsafe. Added a config option to the ctool library to add
+    extra ciphers or blacklist selected ones for more flexibility.
+-   **VFS-12934** Web GUI: Optimized the time of creating and joining a
+    space/group/harvester when the user is a member of a large number of
+    spaces/groups/harvesters.
+-   **VFS-12932** Web GUI: Added infinite scroll to some dropdowns
+    making them load faster when there are large number of items.
+-   **VFS-12896** Web GUI: Added loaders with progress on group
+    hierarchy view.
+-   **VFS-12892** Web GUI: Added support for DataCite metadata of public
+    share.
+-   **VFS-12891** Added support for DataCite metadata format in public
+    data records, including APIs and the OAI-PMH endpoint for both
+    "datacite" and "oai\_datacite" metadata prefixes.
+-   **VFS-12888** Web GUI: Fixed insufficient privileges to modify
+    privileges as a space owner.
+-   **VFS-12839** Web GUI: Added loading progress in relation-add modals
+    for spaces/groups etc.
+-   **VFS-12771** Web GUI: Added progress loaders to members list.
+-   **VFS-12765** Web GUI: Improved performance of global providers map
+    with large number of supported spaces by using batch requesting and
+    infinite scroll for spaces lists.
+-   **VFS-12759** Web GUI: Improved performance of token views when
+    using large number of spaces, groups and other entities.
+-   **VFS-12716** Web GUI: Changed storage form fields for Swift v3.
+-   **VFS-12703** Implemented backpressure mechanisms on the GraphSync
+    channel between Oneprovider and Onezone. Up to this point, in
+    certain pathological situations, the Oneprovider could flood Onezone
+    with requests and effectively DoS the server. Added configurable
+    parallelism of request processing based on a process pool and fair
+    balancing of processing capacity between clients.
+-   **VFS-12688** Updated Swift helper to support Keystone V3
+    authentication.
+-   **VFS-12674** Web GUI: Improved support for large lists in sidebar
+    by making batch requests to backend and showing loading progress.
+-   **VFS-12673** Web GUI: Improved performance of shares sidebar when
+    there is a large number of spaces with shares by using list caching.
+-   **VFS-12608** Web GUI: Added support for enabling OneS3 service on
+    deployed cluster hosts.
+-   **VFS-12607** Web GUI: Added warning in web certificate view if
+    there is no S3 domain for S3-enabled Oneprovider; added support for
+    certificate DNS names wildcards.
+-   **VFS-12581** Added rich context information to errors across the
+    whole system (expressed in JSON) to improve error reporting and
+    diagnostics.
+-   **VFS-12554** Web GUI: Improved performance of spaces/groups/tokens,
+    etc. sidebar when there are numerous items by using infinite scroll
+    lists.
+-   **VFS-12475** Onedata components can now be started behind a reverse
+    proxy or k8s ingress, and the GUI will function properly. However,
+    it's not yet possible to change the default ports or turn off SSL
+    (this is TBD in the near future).
+-   **VFS-12461** Web GUI: Changed "Open Data" naming to "Public Data".
+-   **VFS-12459** Reworked the concept of Open Data into Public Data; it
+    concerns Shared collections that have been assigned a PID/DOI and
+    are advertised via OAI-PMH. The collections may have different
+    levels of licences assigned, not only the open ones - the rename is
+    to avoid confusion. The `--open-shares-mode` in Oneclient has been
+    renamed to `--public-data-mode`.
+-   **VFS-12380** Allowed to specify oneS3 service port when deploying
+    it for the first time.
+-   **VFS-12377** Added possibility to deploy oneS3 service in already
+    existing cluster.
+-   **VFS-12267** Web GUI: Improved handling of the "service
+    unavailable" error.
+-   **VFS-12079** Added OneS3 service (currently in beta version) to
+    Oneprovider cluster. The service can be configured when deploying
+    the cluster via the UI or the batch mode (including Onedatify). It
+    is possible to add the OneS3 service to an existing cluster using
+    the UI or the REST API.
+-   **VFS-11439** Web GUI: Added support for deploying OneS3 in a
+    Oneprovider cluster, improved the Web certificate view to display
+    multiple DNS names.
+-   **VFS-11284** The OneS3 service can now be deployed by Onepanel in
+    an integrated manner (Oneprovider cluster). Both visual (GUI) and
+    batch modes are supported.
 
 ### 21.02.8
 
