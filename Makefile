@@ -33,7 +33,7 @@ OZ_WORKER_VERSION       := $(shell echo ${OZ_WORKER_VERSION} | tr - .)
 OZ_PANEL_VERSION        := $(shell echo ${OZ_PANEL_VERSION} | tr - .)
 
 ONEZONE_BUILD           ?= 1
-PKG_BUILDER_VERSION     ?= 2102-4
+PKG_BUILDER_VERSION     ?= 25-1
 
 .PHONY: docker docker-dev package.tar.gz
 
