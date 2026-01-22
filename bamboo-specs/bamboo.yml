@@ -281,7 +281,7 @@ Publish packages:
             else
                 echo "WARNING - No packages will be pushed."
                 echo "WARNING - Check version and Linux distribution settings"
-	    fi
+            fi
         else
             ./pkg.py --host docker_packages_devel push xenial.tar.gz
             mv pkg-list.json xenial-pkg-list.json
