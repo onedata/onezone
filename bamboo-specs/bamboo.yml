@@ -279,7 +279,7 @@ Publish packages:
                 ./pkg.py --host docker_packages_devel --release $RELEASE push focal.tar.gz
                 mv pkg-list.json focal-pkg-list.json
             else
-	        echo "WARNING - No packages will be pushed."
+                echo "WARNING - No packages will be pushed."
 		echo "WARNING - Check version and Linux distribution settings"
 	    fi
         else
