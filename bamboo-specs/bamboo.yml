@@ -280,7 +280,7 @@ Publish packages:
                 mv pkg-list.json focal-pkg-list.json
             else
                 echo "WARNING - No packages will be pushed."
-		echo "WARNING - Check version and Linux distribution settings"
+                echo "WARNING - Check version and Linux distribution settings"
 	    fi
         else
             ./pkg.py --host docker_packages_devel push xenial.tar.gz
