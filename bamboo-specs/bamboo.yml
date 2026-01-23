@@ -271,10 +271,10 @@ Publish packages:
         # Check if the repo contains RELEASE file containing major Onedata release tag (e.g. 1802)
         # If not publish to legacy repositories
         if test -f RELEASE; then
-            RELEASE=$(cat RELEASE | cut -c 1-2)
+            RELEASE=$(cat RELEASE)
             # ./pkg.py --host docker_packages_devel --release $RELEASE push centos7.tar.gz
             # mv pkg-list.json centos7-pkg-list.json
-            if [ $RELEASE -ge 19 ]; then
+            if [ $(echo $RELEASE | cut -c 1-2) -ge 19 ]; then
                 # Focal is not supported on 1802
                 ./pkg.py --host docker_packages_devel --release $RELEASE push focal.tar.gz
                 mv pkg-list.json focal-pkg-list.json
