@@ -274,10 +274,13 @@ Publish packages:
             RELEASE=$(cat RELEASE)
             # ./pkg.py --host docker_packages_devel --release $RELEASE push centos7.tar.gz
             # mv pkg-list.json centos7-pkg-list.json
-            if [ $RELEASE -ge 1902 ]; then
+            if [ $(echo $RELEASE | cut -c 1-2) -ge 19 ]; then
                 # Focal is not supported on 1802
                 ./pkg.py --host docker_packages_devel --release $RELEASE push focal.tar.gz
                 mv pkg-list.json focal-pkg-list.json
+            else
+                echo "WARNING - No packages will be pushed."
+                echo "WARNING - Check version and Linux distribution settings"
             fi
         else
             ./pkg.py --host docker_packages_devel push xenial.tar.gz
