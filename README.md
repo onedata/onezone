@@ -43,10 +43,11 @@ With persistence:
 docker run -it --rm --name oz -h oz -v /tmp/oz-pers:/volumes/persistence onedata/onezone:25.0 demo
 ```
 Notes:
+* **WARNING**: The hostname must be set to the same value between consecutive runs
+  e.g. `-h oz`, like above). Otherwise, the service will not start and won't give
+  you any hints or logs why.
 * Demo mode with persistence requires version `>= 25.0`.
-* Hostname must be set to the same value between consecutive runs 
-  (e.g. `-h oz`, like above).
-* The persistence directory mounted from the host must be the same between 
+* The persistence directory mounted from the host must be the same between
   consecutive runs (`/tmp/oz-pers` in above example).
 
 ## Support
