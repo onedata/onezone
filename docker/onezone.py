@@ -166,7 +166,7 @@ SLEEP_COULD_NOT_RESOLVE_VERSION_SEC = 30
 
 MSG_FRESH_DEPLOYMENT = """No previous persistence detected.
 
-This is a fresh deployment of Onezone in version {new_version}
+Starting a fresh deployment of Onezone in version {new_version} ...
 """
 
 MSG_RESUME_SAME_VERSION = """Preexisting persistence has been detected, version {prev_version}
@@ -176,8 +176,10 @@ Resuming Onezone in version {current_version} ...
 
 MSG_RESUME_UPGRADE = """Preexisting persistence has been detected, version {prev_version}
 
-Resuming Onezone in version {current_version} - an upgrade will be performed
-during the startup of services. Please allow more time until the services are operational.
+Resuming Onezone and upgrading to version {current_version}  ...
+
+The upgrade will be performed during the startup of services. 
+Please allow more time until the services are operational.
 
 You may monitor the logs for details (paths inside the container):
 /var/log/oz_panel/info.log
@@ -187,6 +189,7 @@ You may monitor the logs for details (paths inside the container):
 MSG_UPGRADE_JUMP_TOO_BIG = """Preexisting persistence has been detected, version {prev_version}
 
 ERROR: You are attempting to run Onezone in version {current_version}
+
 Upgrading by more than one major versions is not supported. Please upgrade to
 an intermediate major version first, then start this version. Note that majors
 21 and 25 are treated as the same one, due to reworked naming convention.
@@ -205,8 +208,8 @@ Exemplary disallowed upgrades:
 MSG_DOWNGRADE = """Preexisting persistence has been detected, version {prev_version}
 
 ERROR: You are attempting to run Onezone in version {current_version}
-Downgrades are not supported. Please use Onezone in version {prev_version}
-or newer.
+
+Downgrades are not supported. Please use Onezone in version {prev_version} or newer.
 """
 
 
