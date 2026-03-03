@@ -153,8 +153,8 @@ MSG_FAILURE_FOOTER = (
 )
 
 MSG_COULD_NOT_RESOLVE_VERSION = """Could not resolve the previously deployed software version;
-for versions < 25.1, this information is not supported. Assuming the previously running
-version was NOT LOWER THAN 20.02.1.
+for versions < 25.1, this information is not supported. 
+Assuming the previously running version was NOT LOWER THAN 20.02.1.
 
 WARNING: if you are upgrading from version 19.02.* or lower, STOP the deployment
 and first upgrade to 20.02.*. Otherwise, let it continue.
@@ -176,7 +176,7 @@ Resuming Onezone in version {current_version} ...
 
 MSG_RESUME_UPGRADE = """Preexisting persistence has been detected, version {prev_version}
 
-Resuming Onezone and upgrading to version {current_version}  ...
+Resuming Onezone and upgrading to version {current_version} ...
 
 The upgrade will be performed during the startup of services. 
 Please allow more time until the services are operational.
