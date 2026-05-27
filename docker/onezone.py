@@ -44,6 +44,8 @@ LOG_LEVELS = ["debug", "info", "error"]
 PASSPHRASE_USERNAME = "onepanel"
 EMERGENCY_PASSPHRASE_VARIABLE = "ONEPANEL_EMERGENCY_PASSPHRASE"
 
+WAIT_FOR_WORKER_RETRIES = 900
+
 
 # -----------------------------------------------------------------------------
 # Paths
@@ -762,10 +764,10 @@ def auth_request(method: Any, *args: Any, **kwargs: Any) -> requests.Response:
 def wait_for_workers() -> None:
     url = f"{ONEPANEL_BASE_URL}/api/v3/onepanel/zone/nagios"
     retries = 0
-    while not is_nagios_healthy(url, retries % 10 == 9):
+    while not is_nagios_healthy(url, retries % 30 == 10):
         time.sleep(1)
         retries += 1
-        if retries == 120:
+        if retries == WAIT_FOR_WORKER_RETRIES:
             raise RuntimeError("Timeout waiting for the Onepanel service readiness")
 
 
@@ -775,7 +777,13 @@ def is_nagios_healthy(url: str, log_errors: bool = False) -> bool:
         if not r.ok:
             if log_errors:
                 log(
-                    "Onepanel service is reachable, but nagios is not reporting an OK status - retrying..."
+                    "Onepanel service is reachable, but nagios is not reporting an OK status - retrying...\n"
+                    "This could mean that services take longer to start due to e.g. Couchbase DB reorganization.\n"
+                    "Allow some time (usually about 5 minutes, but sometimes much longer) and do not interrupt the process.\n"
+                    "You may consult the logs for more details:\n"
+                    "  - /var/log/oz_worker/info.log\n"
+                    "  - /var/log/oz_panel/info.log\n"
+                    "  - /opt/couchbase/var/lib/couchbase/logs/info.log\n"
                 )
             return False
     except Exception:
