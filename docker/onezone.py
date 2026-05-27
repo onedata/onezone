@@ -764,7 +764,7 @@ def auth_request(method: Any, *args: Any, **kwargs: Any) -> requests.Response:
 def wait_for_workers() -> None:
     url = f"{ONEPANEL_BASE_URL}/api/v3/onepanel/zone/nagios"
     retries = 0
-    while not is_nagios_healthy(url, retries % 30 == 10):
+    while not is_nagios_healthy(url, retries % 30 == 10):  # first log after 10 seconds
         time.sleep(1)
         retries += 1
         if retries == WAIT_FOR_WORKER_RETRIES:
