@@ -35,37 +35,24 @@ The build process itself is fully based on Docker containers, so no other prereq
 
 Without persistence:
 ```bash
-docker run -it --rm --name oz onedata/onezone:21.02.9 demo
+docker run -it --rm --name oz onedata/onezone:25.0 demo
 ```
 
 With persistence:
 ```bash
-docker run -it --rm --name oz -h oz -v /tmp/oz-pers:/volumes/persistence onedata/onezone:21.02.9 demo
+docker run -it --rm --name oz -h oz -v /tmp/oz-pers:/volumes/persistence onedata/onezone:25.0 demo
 ```
 Notes:
-* Demo mode with persistence requires version `>= 21.02.9`.
-* Hostname must be set to the same value between consecutive runs 
-  (e.g. `-h oz`, like above).
-* The persistence directory mounted from the host must be the same between 
+* **WARNING**: The hostname must be set to the same value between consecutive runs
+  e.g. `-h oz`, like above). Otherwise, the service will not start and won't give
+  you any hints or logs why.
+* Demo mode with persistence requires version `>= 25.0`.
+* The persistence directory mounted from the host must be the same between
   consecutive runs (`/tmp/oz-pers` in above example).
 
 ## Support
 
 Please use [GitHub issues](https://github.com/onedata/onedata/issues) mechanism as the main channel for reporting bugs and requesting support or new features.
-
-## Copyright and license
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
 ## Acknowledgements
 This work was supported in part by 2017's research funds in the scope of the co-financed international projects framework (project no. 3711/H2020/2017/2).
