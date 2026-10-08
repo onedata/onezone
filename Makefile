@@ -236,6 +236,7 @@ docker: docker-dev
                       --build-arg HTTP_PROXY=$(HTTP_PROXY) \
                       --name onezone \
                       --publish --remove docker
+	docker tag onezone:$(ONEZONE_VERSION) onezone:$(RELEASE)-latest
 
 docker-dev:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
@@ -252,6 +253,7 @@ docker-dev:
                       --short-report docker-dev-build-list.json \
                       --name onezone-dev \
                       --publish --remove docker
+	docker tag onezone-dev:$(ONEZONE_VERSION) onezone-dev:$(RELEASE)-latest
 
 
 
