@@ -235,8 +235,10 @@ docker: docker-dev
                       --build-arg ONEZONE_VERSION=$(ONEZONE_VERSION) \
                       --build-arg HTTP_PROXY=$(HTTP_PROXY) \
                       --name onezone \
-                      --publish --remove docker
-	docker tag onezone:$(ONEZONE_VERSION) onezone:$(RELEASE)-latest
+                      --publish docker
+	docker tag $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest
+	docker push $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest
+	docker rmi $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION)
 
 docker-dev:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
@@ -252,8 +254,10 @@ docker-dev:
                       --report docker-dev-build-report.txt \
                       --short-report docker-dev-build-list.json \
                       --name onezone-dev \
-                      --publish --remove docker
-	docker tag onezone-dev:$(ONEZONE_VERSION) onezone-dev:$(RELEASE)-latest
+                      --publish docker
+	docker tag $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest
+	docker push $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest
+	docker rmi $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION)
 
 
 
