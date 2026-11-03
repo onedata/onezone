@@ -238,7 +238,7 @@ docker: docker-dev
                       --name onezone \
                       --publish docker
 	@# If this a release branch then create and push a '-latest' release image
-	@if ! echo "$(ONECLIENT_VERSION)" | grep -qE '\.[0-9a-z]{7}$$'; then \
+	@if ! echo "$(ONEZONE_VERSION)" | grep -qE '\.[0-9a-z]{4,}$$'; then \
 		echo "This a release branch. Creating docker image $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest..."; \
 		docker tag $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest; \
 		docker push $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest; \
@@ -262,7 +262,7 @@ docker-dev:
                       --name onezone-dev \
                       --publish docker
 	@# If this a release branch then create and push a '-latest' release image
-	@if ! echo "$(ONECLIENT_VERSION)" | grep -qE '\.[0-9a-z]{7}$$'; then \
+	@if ! echo "$(ONEZONE_VERSION)" | grep -qE '\.[0-9a-z]{4,}$$'; then \
 		echo "This a release branch. Creating docker image $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest..."; \
 		docker tag $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest; \
 		docker push $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest; \
