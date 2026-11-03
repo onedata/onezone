@@ -236,9 +236,14 @@ docker: docker-dev
                       --build-arg HTTP_PROXY=$(HTTP_PROXY) \
                       --name onezone \
                       --publish docker
-	docker tag $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest
-	docker push $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest
-	docker rmi $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION)
+	@# If this a release branch then create and push a '-latest' release image
+	@if ! echo "$(ONECLIENT_VERSION)" | grep -qE '\.[0-9a-z]{7}$$'; then \
+		echo "This a release branch. Creating docker image $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest..."; \
+		docker tag $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest; \
+		docker push $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest; \
+		docker rmi $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest; \
+	fi 
+	@docker rmi $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION)
 
 docker-dev:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
@@ -255,10 +260,14 @@ docker-dev:
                       --short-report docker-dev-build-list.json \
                       --name onezone-dev \
                       --publish docker
-	docker tag $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest
-	docker push $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest
-	docker rmi $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION)
-
+	@# If this a release branch then create and push a '-latest' release image
+	@if ! echo "$(ONECLIENT_VERSION)" | grep -qE '\.[0-9a-z]{7}$$'; then \
+		echo "This a release branch. Creating docker image $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest..."; \
+		docker tag $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION) $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest; \
+		docker push $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest; \
+		docker rmi $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest; \
+	fi 
+	@docker rmi $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION)
 
 
 codetag-tracker:
