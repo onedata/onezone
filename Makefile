@@ -244,7 +244,8 @@ docker: docker-dev
 		docker push $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest; \
 		docker rmi $(DOCKER_REG_NAME)/onezone:$(RELEASE)-latest; \
 	fi 
-	@docker rmi $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION)
+	@docker rmi $(DOCKER_REG_NAME)/onezone:$(ONEZONE_VERSION) || true
+	@docker rmi $(DOCKER_REG_NAME)/onezone:develop || true
 
 docker-dev:
 	./docker_build.py --repository $(DOCKER_REG_NAME) --user $(DOCKER_REG_USER) \
@@ -268,7 +269,8 @@ docker-dev:
 		docker push $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest; \
 		docker rmi $(DOCKER_REG_NAME)/onezone-dev:$(RELEASE)-latest; \
 	fi 
-	@docker rmi $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION)
+	@docker rmi $(DOCKER_REG_NAME)/onezone-dev:$(ONEZONE_VERSION) || true
+	@docker rmi $(DOCKER_REG_NAME)/onezone-dev:develop || true
 
 
 codetag-tracker:
