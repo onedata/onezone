@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from os.path import join
@@ -16,6 +16,7 @@ DIRS = [
     '/var/log/oz_panel',
     '/var/log/oz_worker',
     '/var/log/cluster_manager',
+    '/var/log/onezone',
     '/opt/couchbase/var/lib/couchbase'
 ]
 

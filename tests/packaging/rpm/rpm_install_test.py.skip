@@ -1,9 +1,12 @@
+import os
 import pytest
 from tests.test_common import *
 from environment import docker, env
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
+with open('./RELEASE', 'r') as f:
+    release = f.read().replace('\n', '')
 
 class Distribution(object):
 
@@ -34,12 +37,19 @@ class Distribution(object):
 
 @pytest.fixture(scope='module')
 def setup_command():
-    return 'yum -y update && ' \
+    return 'echo "proxy=http://proxy.devel.onedata.org:3128" >> /etc/yum.conf && ' \
+        'sed -i "s/enabled=1/enabled=0/" /etc/yum/pluginconf.d/fastestmirror.conf && ' \
+        'sed -i "s/mirrorlist/#mirrorlist/" /etc/yum.repos.d/CentOS-Base.repo && ' \
+        'sed -i "s/#baseurl/baseurl/" /etc/yum.repos.d/CentOS-Base.repo && ' \
+        'yum -y update && ' \
         'yum -y install epel-release && ' \
-        'yum -y install ca-certificates python wget python-setuptools && ' \
-        'easy_install requests && ' \
-        'wget -qO- "{url}/yum/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
-        .format(url='http://packages.onedata.org')
+        'yum -y install ca-certificates python wget curl && ' \
+        'yum -y install python-setuptools && ' \
+        'curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output /tmp/get-pip.py && ' \
+        'python /tmp/get-pip.py && ' \
+        'python -m pip install requests && ' \
+        'curl -sSL "{url}/yum/{release}/onedata_centos_7x.repo" > /etc/yum.repos.d/onedata.repo' \
+        .format(url='http://packages.onedata.org', release=release)
 
 
 @pytest.fixture(scope='module',
@@ -54,9 +64,10 @@ def onezone(request, setup_command):
 
     return distribution
 
-@pytest.mark.skip(reason="Fix SCL paths")
+@pytest.mark.skip()
 def test_onezone_installation(onezone):
     assert 0 == docker.exec_(onezone.container,
                              interactive=True,
                              tty=True,
-                             command='python /root/data/install_onezone.py')
+                             command='python /root/data/install_onezone.py ' \
+                                     '{}'.format(release,))

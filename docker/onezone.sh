@@ -1,24 +1,36 @@
 #!/bin/bash
 
-function stop_service {
-  echo -e "Stopping ${2:-$1}..."
-  service $1 stop >/dev/null 2>&1
+source /root/internal-scripts/common.sh
+
+if [ $$ -ne 1 ]; then
+	SCRIPT_NAME=$(basename "$0")
+	echo "ERROR: the '$SCRIPT_NAME' script MUST be run as the main container process (PID 1)" \
+	     "to ensure proper handling of termination signals."
+	echo "However, the current PID is $$. If you are calling this script from a custom wrapper," \
+	     "make sure to use the 'exec' command."
+	exit 1
+fi
+
+function on_termination_signal {
+    dispatch-log "Received a termination signal"
+    /root/internal-scripts/onezone-ensure-stopped.sh
+    dispatch-log "Main process exiting"
 }
 
-function stop_onezone {
-  echo -e "\nGracefully stopping onezone...\n"
+trap on_termination_signal SIGHUP SIGINT SIGTERM
 
-  stop_service oz_panel
-  stop_service oz_worker
-  stop_service cluster_manager
-  stop_service couchbase-server couchbase
+# make sure the graceful stop marker is not set; see common.sh
+rm -f ${GRACEFUL_STOP_LOCK_FILE}
 
-  echo -e "\nAll services stopped. Exiting..."
+# must be done before dispatch-log, which writes to a persistent directory
+/root/persistence-dir.py --copy-missing-files
 
-  exit 0
-}
+dispatch-log "Main process starting" extra_linebreak_in_log_file
 
-trap stop_onezone SIGHUP SIGINT SIGTERM
+if [ $1"x" == "demox" ]; then
+    source /root/demo-mode/setup-demo.sh
+fi
 
 /root/onezone.py &
+
 wait $!

@@ -1,2 +1,60 @@
-onezone
-=======
+This repository contains the necessary code for building Onezone packages.
+Onezone is part of [Onedata](http://onedata.org) - the global data management system.
+
+## Submodules
+
+The following submodules are used in the repository:
+
+
+
+| Submodule | URL      | Description |
+|----------------------|---------------------|-------------------------|
+| **Bamboo scripts** | https://github.com/onedata/bamboos | Bamboos contains common scripts used in Continuous Integration processes that use the Bamboo platform. |
+| **Cluster Manager** | https://github.com/onedata/cluster-manager | Common Onedata component shared between Onezone and Oneprovider, which monitors and controls Onedata worker processes at site level. |
+| **Onezone worker** | https://github.com/onedata/oz-worker | Main Onezone functional component, based on the **Cluster Worker** framework. |
+| **Onepanel** | https://github.com/onedata/onepanel | Onepanel administration service implementation. |
+
+In order to initialize all submodules please use:
+```bash
+make submodules
+```
+instead of directly invoking Git `submodule` commands.
+
+## Building
+
+In order to build onezone packages and docker images invoke:
+
+```bash
+make
+```
+
+The building is done in docker containers. The builders docker images are available at [Docker Hub](https://hub.docker.com/u/onedata/). 
+The build process itself is fully based on Docker containers, so no other prerequisites other than Docker should be necessary. In case of problems with Docker cache, please set `NO_CACHE=1` environment variable.
+
+## Running Onezone in demo mode
+
+Without persistence:
+```bash
+docker run -it --rm --name oz onedata/onezone:25.0 demo
+```
+
+With persistence:
+```bash
+docker run -it --rm --name oz -h oz -v /tmp/oz-pers:/volumes/persistence onedata/onezone:25.0 demo
+```
+Notes:
+* **WARNING**: The hostname must be set to the same value between consecutive runs
+  e.g. `-h oz`, like above). Otherwise, the service will not start and won't give
+  you any hints or logs why.
+* Demo mode with persistence requires version `>= 25.0`.
+* The persistence directory mounted from the host must be the same between
+  consecutive runs (`/tmp/oz-pers` in above example).
+
+## Support
+
+Please use [GitHub issues](https://github.com/onedata/onedata/issues) mechanism as the main channel for reporting bugs and requesting support or new features.
+
+## Acknowledgements
+This work was supported in part by 2017's research funds in the scope of the co-financed international projects framework (project no. 3711/H2020/2017/2).
+
+This work is co-funded by the EOSC-hub project (Horizon 2020) under Grant number 777536.
